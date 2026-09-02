@@ -668,7 +668,7 @@ function App() {
           <div className="auth-card">
             <div className="auth-header">
               <div className="brand-badge">
-                <span className="brand-mark"></span>
+                <span className="brand-logo-box">EZ</span>
                 <span className="brand-title">Task Planner</span>
               </div>
               <h1 className="auth-title">
@@ -942,7 +942,7 @@ function App() {
         <div className="nav-container">
           <div className="nav-left">
             <div className="brand-badge">
-              <span className="brand-mark"></span>
+              <span className="brand-logo-box">EZ</span>
               <span className="brand-title">Task Planner</span>
             </div>
           </div>
