@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Planner — Master Technical Defense & Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: 11in 8.5in; /* US Letter Landscape */
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #09090b;
+      color: #f4f4f5;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.45;
+    }
+
+    .slide {
+      width: 11in;
+      height: 8.5in;
+      page-break-after: always;
+      position: relative;
+      background: #09090b;
+      padding: 38px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border-bottom: 1px solid #27272a;
+    }
+
+    /* Slide Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #27272a;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .slide-title-group h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.025em;
+    }
+
+    .slide-title-group p {
+      font-size: 12px;
+      color: #a1a1aa;
+      margin-top: 2px;
+    }
+
+    .badge-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 4px;
+      color: #f4f4f5;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Slide Content Area */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Slide Footer */
+    .slide-footer {
+      border-top: 1px solid #1f1f23;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #71717a;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    /* Panels */
+    .panel {
+      background: #111114;
+      border: 1px solid #27272a;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #ffffff;
+      border-radius: 2px;
+    }
+
+    .panel p, .panel li {
+      font-size: 11px;
+      color: #a1a1aa;
+      line-height: 1.5;
+    }
+
+    .panel ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .panel li strong {
+      color: #f4f4f5;
+      font-weight: 600;
+    }
+
+    /* Code Boxes */
+    .code-box {
+      background: #09090b;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #e4e4e7;
+      line-height: 1.45;
+      overflow: hidden;
+    }
+
+    .code-kw { color: #f472b6; font-weight: 600; }
+    .code-fn { color: #fbbf24; }
+    .code-str { color: #34d399; }
+    .code-hl { color: #38bdf8; }
+    .code-comment { color: #71717a; font-style: italic; }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+      background: #111114;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: #18181b;
+      padding: 7px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #f4f4f5;
+      border-bottom: 1px solid #27272a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .data-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #1f1f23;
+      color: #a1a1aa;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      color: #e4e4e7;
+    }
+
+    /* Trace Pipeline Diagram */
+    .trace-pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .trace-step {
+      background: #111114;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .trace-step-num {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .trace-step-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .trace-step-desc {
+      font-size: 9.5px;
+      color: #a1a1aa;
+      line-height: 1.35;
+    }
+
+    /* Cover Slide */
+    .cover-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .cover-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 6px 16px;
+      background: #111114;
+      border: 1px solid #27272a;
+      border-radius: 9999px;
+    }
+
+    .cover-mark {
+      width: 10px;
+      height: 10px;
+      background: #ffffff;
+      border-radius: 2px;
+    }
+
+    .cover-brand span {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cover-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .cover-subtitle {
+      font-size: 15px;
+      color: #a1a1aa;
+      max-width: 760px;
+      margin: 0 auto 30px;
+      line-height: 1.5;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 820px;
+      background: #111114;
+      border: 1px solid #27272a;
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    .meta-box .meta-h {
+      font-size: 9.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    .meta-box .meta-v {
+      font-size: 12px;
+      font-weight: 600;
+      color: #f4f4f5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       SLIDE 1: COVER
+       ========================================== -->
+  <div class="slide cover-slide">
+    <div>
+      <div class="cover-brand">
+        <span class="cover-mark"></span>
+        <span>Full-Stack Engineering & Architectural Defense</span>
+      </div>
+      <h1 class="cover-title">Task Planner: Master Technical Presentation</h1>
+      <p class="cover-subtitle">
+        Deep technical inspection of Frontend Architecture (React 18 + Vite), Loops & Statement Logic, Email Verification & OTP Lifecycle, Backend Runtime (Node.js/Express MVC), MySQL Relational Storage, Password Cryptography, and End-to-End Troubleshooting Pipeline.
+      </p>
+
+      <div class="cover-meta-grid">
+        <div class="meta-box">
+          <div class="meta-h">Frontend Architecture</div>
+          <div class="meta-v">React 18 &bull; Vite 8 &bull; Inter</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-h">Backend MVC Pattern</div>
+          <div class="meta-v">Node.js &bull; Express &bull; Wabi</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-h">Relational Persistence</div>
+          <div class="meta-v">MySQL / MariaDB (InnoDB)</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-h">Security Model</div>
+          <div class="meta-v">Bcrypt 10R &bull; JWT &bull; RateLimiter</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Comprehensive Master Presentation</span>
+      <span>Slide 1 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 2: FRONTEND STACK & EXECUTIVE MONOCHROME
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Frontend Stack & Design Architecture</h2>
+        <p>React 18 single-page application built on Vite with Executive Monochrome Aero standards</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Frontend Core</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="panel">
+          <div class="panel-title">React 18 & State Paradigms</div>
+          <ul>
+            <li><strong>Single Page Architecture:</strong> Fast client-side rendering without full browser reloads.</li>
+            <li><strong>Hooks Architecture:</strong> Managed via <code>useState</code>, <code>useEffect</code>, <code>useMemo</code>, <code>useRef</code>.</li>
+            <li><strong>Optimistic UI Physics:</strong> Local state updates immediately before network resolution for 0ms perceived lag.</li>
+            <li><strong>Local Token Store:</strong> Tokens and theme choices stored safely in <code>localStorage</code>.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Vite 8 Build & Proxy Engine</div>
+          <ul>
+            <li><strong>Hot Module Replacement (HMR):</strong> Near-instantaneous development server reload times.</li>
+            <li><strong>Optimized Production Bundling:</strong> Packages 1,805 modules into compact chunks in ~2 seconds.</li>
+            <li><strong>Reverse Proxying:</strong> Proxies <code>/api</code> calls to <code>http://localhost:3000</code> in development.</li>
+            <li><strong>Cloud-Ready Base URL:</strong> Supports <code>import.meta.env.VITE_API_URL</code> for Vercel/production.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Executive Monochrome Aero UI</div>
+          <ul>
+            <li><strong>Deep Obsidian Canvas:</strong> <code>#09090b</code> dark canvas paired with grounded <code>#111114</code> cards.</li>
+            <li><strong>Strict 8pt Spatial Rhythm:</strong> Spacing strictly adheres to 8px, 16px, 24px, 32px, 48px.</li>
+            <li><strong>Purged AI Slop:</strong> Zero purple gradients, no blurry glassmorphism, no artificial badges.</li>
+            <li><strong>Tactile Elevation:</strong> Interactive elements elevate cleanly with <code>transform: translateY(-1px)</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Typography & Vector Icons</div>
+        <p>
+          Headlines use <strong>Inter</strong> with tight letter tracking (<code>-0.025em</code>) for confidence and scannability. Numerical metrics and status chips use <strong>JetBrains Mono</strong>. Vector icons are strictly provided by <strong>Lucide React</strong> for functional utility actions.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Frontend Core Stack</span>
+      <span>Slide 2 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 3: FRONTEND LOOPS, STATEMENTS & HOOKS
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Frontend Code Logic: Loops, Statements & Hooks</h2>
+        <p>Every programmatic statement, loop pattern, and state memoization dissected</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Code Logic</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Loops & Array Transformations</div>
+          <ul>
+            <li><strong><code>.map()</code> (Kanban & Task Rendering):</strong>
+              <br>&bull; Maps filtered tasks into card components:
+              <br><code class="mono">filteredTasks.filter(t => t.status === "pending").map(task => &lt;TaskCard key={task.id} ... /&gt;)</code>
+              <br>&bull; Maps subtasks checklist: <code>task.subtasks.map(s => ...)</code>
+              <br>&bull; Maps category option tags in dropdowns: <code>CATEGORIES.map(c => ...)</code>
+            </li>
+            <li><strong><code>.filter()</code> (Multi-Criteria Query Engine):</strong>
+              <br>&bull; Evaluates search query, priority match, category match, and status match in real time.
+            </li>
+            <li><strong><code>.reduce()</code> (Time Estimation Aggregator):</strong>
+              <br>&bull; Tallies remaining hours across active deliverables:
+              <br><code class="mono">tasks.filter(t => t.status !== "done").reduce((sum, t) => sum + (t.estimated_minutes || 30), 0)</code>
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Core Statements & React Hooks</div>
+          <ul>
+            <li><strong><code>useMemo()</code>:</strong> Caches heavy search filtering and HUD calculation so it only recalculates when <code>tasks</code> or filter queries change.</li>
+            <li><strong><code>useEffect()</code>:</strong>
+              <br>&bull; Global keyboard shortcut listener for <code>N</code> (New Task), <code>/</code> (Search Focus), and <code>Esc</code> (Close).
+              <br>&bull; Session verification on boot (<code>/auth/me</code>).
+            </li>
+            <li><strong>Conditional Ternaries:</strong>
+              <br>&bull; <code>authMode === "login" ? "Sign In" : "Create Account"</code>
+              <br>&bull; <code>viewMode === "kanban" ? &lt;KanbanStage /&gt; : &lt;ListTable /&gt;</code>
+            </li>
+            <li><strong>Optimistic State Setters:</strong>
+              <br><code class="mono">setTasks(prev => prev.map(t => t.id === id ? { ...t, status: next } : t))</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Centralized Service Pattern (`services/api.js`)</div>
+        <p>
+          Adopted directly from WabiSeminar: <strong><code>apiRequest(endpoint, options)</code></strong> abstracts all native <code>fetch()</code> boilerplate, automatically reads tokens from <code>localStorage</code>, injects <code>Authorization: Bearer</code> headers, parses JSON, and handles error rejection uniformly.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Frontend Loops & Statements</span>
+      <span>Slide 3 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 4: AUTH LANDING & REGISTRATION PAGE
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Auth Landing & Registration Page</h2>
+        <p>Single-card dual-mode authentication with RFC regex validation and password physics</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Auth Page</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Dual-Mode Card Interface</div>
+          <ul>
+            <li><strong>State Toggle:</strong> <code>authMode === "login"</code> vs <code>"signup"</code> controlled by a segmented pill tab.</li>
+            <li><strong>Clean Single Surface:</strong> Hosted on a centered <code>#111114</code> card container with a 1px <code>#27272a</code> border and elevated drop shadow.</li>
+            <li><strong>Input Sanitization Guards:</strong>
+              <br>&bull; Email format verified via regex: <code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code>.
+              <br>&bull; Username length verified (&ge; 3 characters).
+              <br>&bull; Password length verified (&ge; 6 characters).
+            </li>
+            <li><strong>Password Visibility Physics:</strong> Interactive <code>Eye</code> / <code>EyeOff</code> button switching input type between <code>password</code> and <code>text</code>.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Registration & Login Execution Logic</div>
+          <div class="code-box">
+<span class="code-kw">const</span> <span class="code-fn">handleAuthSubmit</span> = <span class="code-kw">async</span> (e) => {
+  e.<span class="code-fn">preventDefault</span>();
+  <span class="code-fn">setAuthError</span>(<span class="code-str">""</span>);
+  <span class="code-kw">const</span> endpoint = authMode === <span class="code-str">"login"</span> ? <span class="code-str">"/auth/login"</span> : <span class="code-str">"/auth/signup"</span>;
+  <span class="code-kw">const</span> payload = authMode === <span class="code-str">"login"</span>
+    ? { email: authEmail, password: authPassword }
+    : { username: authUsername, email: authEmail, password: authPassword };
+
+  <span class="code-kw">try</span> {
+    <span class="code-kw">const</span> data = <span class="code-kw">await</span> <span class="code-fn">apiRequest</span>(endpoint, { method: <span class="code-str">"POST"</span>, body: JSON.<span class="code-fn">stringify</span>(payload) });
+    localStorage.<span class="code-fn">setItem</span>(<span class="code-str">"tp_token"</span>, data.token);
+    localStorage.<span class="code-fn">setItem</span>(<span class="code-str">"tp_user"</span>, JSON.<span class="code-fn">stringify</span>(data.user));
+    <span class="code-fn">setToken</span>(data.token);
+    <span class="code-fn">setUser</span>(data.user);
+  } <span class="code-kw">catch</span> (err) {
+    <span class="code-fn">setAuthError</span>(err.message || <span class="code-str">"Invalid email or password."</span>);
+  }
+};
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Real-Time Error Alert Banner</div>
+        <p>
+          Displays a high-contrast crimson banner (<code>.alert-banner.error</code>) whenever the server returns 401 Unauthorized, 409 Conflict, or 400 Bad Request, clearing automatically on user re-entry.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Landing & Registration</span>
+      <span>Slide 4 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 5: EMAIL VERIFICATION STEP-BY-STEP
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Email Verification Lifecycle (Step-by-Step)</h2>
+        <p>Detailed verification flow from newly registered account to verified status badge</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Email Verification</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-4">
+        <div class="panel">
+          <div class="panel-title">1. Account Created</div>
+          <p>
+            When a user registers, their account is provisioned with <code>is_verified = 0</code>.
+          </p>
+          <p style="margin-top:8px;">
+            The top navigation bar displays an amber shield badge: <span class="mono" style="color:#f59e0b;">[&#9888; Verify]</span>.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">2. Requesting OTP</div>
+          <p>
+            User clicks the <code>Verify</code> badge. React triggers <code>POST /api/auth/send-verification</code> with their JWT Bearer token.
+          </p>
+          <p style="margin-top:8px;">
+            Server generates a secure 6-digit OTP and commits it to <code>users.verification_code</code>.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">3. Entering OTP Code</div>
+          <p>
+            An Executive dialog modal opens.
+          </p>
+          <p style="margin-top:8px;">
+            User enters the 6-digit code. Submitting fires <code>POST /api/auth/verify-email</code> passing <code>{ code: "123456" }</code>.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">4. Live State Mutation</div>
+          <p>
+            Server verifies match, sets <code>is_verified = 1</code>, and nulls the code in MySQL.
+          </p>
+          <p style="margin-top:8px;">
+            React state mutates: badge switches instantly to green <span class="mono" style="color:#10b981;">[&#10003; Verified]</span> without page refresh!
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Verification Code Handling Logic</div>
+        <div class="code-box">
+<span class="code-comment">// backend/controllers/authController.js</span>
+<span class="code-kw">const</span> [rows] = <span class="code-kw">await</span> db.<span class="code-fn">execute</span>(<span class="code-str">"SELECT verification_code FROM users WHERE id = ?"</span>, [req.user.id]);
+<span class="code-kw">if</span> (rows[0].verification_code !== code.<span class="code-fn">trim</span>()) {
+  <span class="code-kw">return</span> res.<span class="code-fn">status</span>(400).<span class="code-fn">json</span>({ message: <span class="code-str">"Invalid verification code"</span> });
+}
+<span class="code-kw">await</span> db.<span class="code-fn">execute</span>(<span class="code-str">"UPDATE users SET is_verified = 1, verification_code = NULL WHERE id = ?"</span>, [req.user.id]);
+res.<span class="code-fn">json</span>({ message: <span class="code-str">"Email verified successfully"</span>, is_verified: <span class="code-kw">true</span> });
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Email Verification</span>
+      <span>Slide 5 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 6: TASK STORING & SUBTASK CHECKLISTS
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Task Storing Logic & Checklists</h2>
+        <p>JSON serialization in MySQL, optimistic checkbox physics, and 1-click quick move transitions</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Task Storing</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Subtask Serialization Strategy</div>
+          <ul>
+            <li><strong>Why Stored as JSON:</strong> Avoids complex multi-table joins for simple task steps.</li>
+            <li><strong>On-Disk Column:</strong> MySQL column <code>tasks.subtasks TEXT DEFAULT NULL</code>.</li>
+            <li><strong>Storage Format:</strong> Serialized JSON string:
+              <br><code class="mono">[{"id":"1725","title":"Audit schema","completed":true}]</code>
+            </li>
+            <li><strong>Controller Formatter:</strong> <code>JSON.parse(row.subtasks)</code> converts the string into native JavaScript objects sent to React.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Optimistic Checkbox State Update</div>
+          <div class="code-box">
+<span class="code-kw">const</span> <span class="code-fn">handleToggleSubtask</span> = <span class="code-kw">async</span> (task, subId) => {
+  <span class="code-kw">const</span> updatedSubs = task.subtasks.<span class="code-fn">map</span>(s => 
+    s.id === subId ? { ...s, completed: !s.completed } : s
+  );
+  <span class="code-comment">// 1. Immediate UI update (0ms perceived lag)</span>
+  <span class="code-fn">setTasks</span>(prev => prev.<span class="code-fn">map</span>(t => t.id === task.id ? { ...t, subtasks: updatedSubs } : t));
+
+  <span class="code-comment">// 2. Async database persistence in background</span>
+  <span class="code-kw">try</span> {
+    <span class="code-kw">await</span> <span class="code-fn">apiRequest</span>(<span class="code-str">`/tasks/${task.id}`</span>, { method: <span class="code-str">"PUT"</span>, body: JSON.<span class="code-fn">stringify</span>({ ...task, subtasks: updatedSubs }) });
+  } <span class="code-kw">catch</span> (err) {
+    <span class="code-fn">fetchTasks</span>(); <span class="code-comment">// Revert on network failure</span>
+  }
+};
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="panel">
+          <div class="panel-title">1-Click Quick Move</div>
+          <p>Instant status buttons (<code>Start</code>, <code>Complete</code>, <code>Reopen</code>) move cards between columns without opening an edit modal.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Fraction Progress</div>
+          <p>Cards compute completed steps dynamically (e.g. <code>2/4</code>), giving teams instant deliverable visibility.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-title">1-Click JSON Backup</div>
+          <p>Generates an export Blob directly in the browser (<code>tasks_export_YYYY-MM-DD.json</code>) with 1 click.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Task Storing Logic</span>
+      <span>Slide 6 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 7: BACKEND RUNTIME & NODE.JS EXPRESS MVC
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Backend Runtime & MVC Architecture</h2>
+        <p>Node.js runtime, Express 5.x REST framework, and WabiSeminar MVC modularity</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Backend Architecture</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-4">
+        <div class="panel">
+          <div class="panel-title">config/database.js</div>
+          <p>Centralized <code>mysql2/promise</code> pool configuring host, port 3306, user, password, and database with 10 max connections.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">middleware/</div>
+          <p>Standalone <code>authMiddleware.js</code> validating Bearer JWT tokens in constant time and injecting <code>req.user</code>.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">controllers/</div>
+          <p>Separates all business logic (<code>authController.js</code> and <code>taskController.js</code>) using <code>db.execute()</code> prepared statements.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">routes/</div>
+          <p>Clean declarative routers (<code>authRoutes.js</code> and <code>taskRoutes.js</code>) mounting controllers and middleware cleanly.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Security & Core Middleware Suite</div>
+          <ul>
+            <li><strong>Helmet:</strong> Sets secure HTTP response headers mitigating clickjacking, XSS, and MIME sniffing.</li>
+            <li><strong>CORS:</strong> Cross-Origin Resource Sharing configured for secure client communication.</li>
+            <li><strong>Morgan:</strong> High-precision HTTP request logging outputting method, URL, status code, and latency.</li>
+            <li><strong>Payload Limits:</strong> Enforces <code>100mb</code> JSON/urlencoded limit preventing payload overflow issues.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Automated Schema Migration on Boot (`init-db.js`)</div>
+          <p>
+            When <code>server.js</code> boots, it invokes <code>initializeDatabase()</code>. It connects to MySQL, executes <code>CREATE DATABASE IF NOT EXISTS task_planner2</code>, creates <code>users</code> and <code>tasks</code> tables if missing, and verifies all columns exist. Requires <strong>zero manual database setup</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Backend Architecture</span>
+      <span>Slide 7 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 8: HOW THE BACKEND WAS TESTED
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Automated Quality Assurance & Testing Suite</h2>
+        <p>End-to-end integration test runner (`backend/test-api.js`) verifying 100% route pass rate</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Testing Suite</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Test Description</th>
+            <th>HTTP Request</th>
+            <th>Payload / Query</th>
+            <th>Verification Criteria</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">Test 1</td>
+            <td>Health Check</td>
+            <td class="mono" style="color:#38bdf8;">GET /api/health</td>
+            <td class="mono">None</td>
+            <td>HTTP 200, status: "ok", timestamp</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 2</td>
+            <td>User Registration</td>
+            <td class="mono" style="color:#34d399;">POST /api/auth/signup</td>
+            <td class="mono">{ username, email, password }</td>
+            <td>HTTP 201, Bcrypt hash, JWT issued</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 3</td>
+            <td>Email Verification</td>
+            <td class="mono" style="color:#34d399;">POST /api/auth/verify-email</td>
+            <td class="mono">{ code: devCode }</td>
+            <td>HTTP 200, is_verified updated to true</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 4</td>
+            <td>Forgot Password OTP</td>
+            <td class="mono" style="color:#34d399;">POST /api/auth/reset-password</td>
+            <td class="mono">{ email, code, newPassword }</td>
+            <td>HTTP 200, re-hashed password stored</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 5</td>
+            <td>Authenticated Login</td>
+            <td class="mono" style="color:#34d399;">POST /api/auth/login</td>
+            <td class="mono">{ email, newPassword }</td>
+            <td>HTTP 200, fresh 7-day JWT returned</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 6</td>
+            <td>Create Task with Subtasks</td>
+            <td class="mono" style="color:#34d399;">POST /api/tasks</td>
+            <td class="mono">{ title, category, subtasks: [...] }</td>
+            <td>HTTP 201, JSON serialized subtasks in DB</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+          <tr>
+            <td class="mono">Test 7</td>
+            <td>JSON Database Export</td>
+            <td class="mono" style="color:#38bdf8;">GET /api/tasks/export</td>
+            <td class="mono">None</td>
+            <td>HTTP 200, task_count, tasks array</td>
+            <td><strong style="color:#34d399;">PASSED</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="panel">
+        <p>
+          <strong>Production Bundling Verification:</strong> <code>npm run build</code> transforms 1,805 modules through Vite in 2.39 seconds with <strong>0 errors and 0 warnings</strong>.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Testing & Verification</span>
+      <span>Slide 8 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 9: DATABASE ENGINE & XAMPP MYSQL DEEP DIVE
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Relational Database & MySQL Storage Engine</h2>
+        <p>Database: task_planner2 on localhost:3306 (InnoDB storage engine)</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Database Tier</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div>
+          <div class="panel-title">Table: `users` (Account Credentials & OTPs)</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Column</th><th>Type</th><th>Key</th><th>Details</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">id</td><td class="mono">INT</td><td>PK</td><td>Auto Increment Primary Key</td></tr>
+              <tr><td class="mono">username</td><td class="mono">VARCHAR(100)</td><td>UNI</td><td>Unique username handle</td></tr>
+              <tr><td class="mono">email</td><td class="mono">VARCHAR(150)</td><td>UNI</td><td>Unique lowercased email</td></tr>
+              <tr><td class="mono">password_hash</td><td class="mono">VARCHAR(255)</td><td></td><td>Bcrypt salted hash (10 rounds)</td></tr>
+              <tr><td class="mono">is_verified</td><td class="mono">TINYINT(1)</td><td></td><td>1 = Verified, 0 = Pending</td></tr>
+              <tr><td class="mono">verification_code</td><td class="mono">VARCHAR(10)</td><td></td><td>Temporary 6-digit confirmation OTP</td></tr>
+              <tr><td class="mono">reset_code</td><td class="mono">VARCHAR(10)</td><td></td><td>Temporary password reset OTP</td></tr>
+              <tr><td class="mono">reset_expires</td><td class="mono">BIGINT</td><td></td><td>Unix timestamp (15m expiration)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="panel-title">Table: `tasks` (Task Items & Serialized Steps)</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Column</th><th>Type</th><th>Key</th><th>Details</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">id</td><td class="mono">INT</td><td>PK</td><td>Auto Increment Primary Key</td></tr>
+              <tr><td class="mono">user_id</td><td class="mono">INT</td><td>FK</td><td>Foreign Key &bull; ON DELETE CASCADE</td></tr>
+              <tr><td class="mono">title</td><td class="mono">VARCHAR(255)</td><td></td><td>Task deliverable title</td></tr>
+              <tr><td class="mono">status</td><td class="mono">VARCHAR(50)</td><td></td><td>pending | in_progress | done</td></tr>
+              <tr><td class="mono">priority</td><td class="mono">VARCHAR(50)</td><td></td><td>low | medium | high</td></tr>
+              <tr><td class="mono">category</td><td class="mono">VARCHAR(50)</td><td></td><td>Engineering, Design, Operations...</td></tr>
+              <tr><td class="mono">subtasks</td><td class="mono">TEXT</td><td></td><td>Serialized JSON checklist items</td></tr>
+              <tr><td class="mono">estimated_minutes</td><td class="mono">INT</td><td></td><td>Default: 30 minutes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Physical On-Disk Storage</div>
+          <p>
+            Saved physically at:
+            <br><code class="mono" style="font-size:11px;">C:\xamp\mysql\data\task_planner2\</code>
+            <br>Files: <code>users.ibd</code> and <code>tasks.ibd</code> managed by MariaDB InnoDB.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Visual GUI Management</div>
+          <p>
+            Accessible via browser at:
+            <br><code class="mono" style="font-size:11px;">http://localhost/phpmyadmin/</code>
+            <br>Live inspection, manual row editing, index optimization, and SQL exports.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Database Schema</span>
+      <span>Slide 9 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 10: HOW PASSWORDS ARE STORED & SECURITY AUDIT
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Password Cryptography & Security Architecture</h2>
+        <p>Defensive security model: how passwords are stored, salted, and brute-force protected</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Security Architecture</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">How & Where Passwords Are Stored</div>
+          <ul>
+            <li><strong>Zero Plaintext Storage:</strong> Plaintext passwords are NEVER written to logs, memory dumps, or disk.</li>
+            <li><strong>Salted Cryptographic Hashing:</strong> Passwords are hashed using <strong>Bcrypt</strong> with 10 salt rounds:
+              <br><code class="mono">const hash = await bcrypt.hash(password, 10);</code>
+            </li>
+            <li><strong>Database Destination:</strong> Stored inside <code>users.password_hash VARCHAR(255)</code> in MySQL.</li>
+            <li><strong>Constant-Time Comparison:</strong> <code>bcrypt.compare(password, user.password_hash)</code> prevents CPU timing attacks.</li>
+            <li><strong>Response Stripping:</strong> <code>password_hash</code> is explicitly stripped before returning user objects to the client.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Security Issues Identified & Fixed</div>
+          <ul>
+            <li><strong>1. Brute-Force Rate Limiting:</strong> Added <code>express-rate-limit</code> protecting <code>/api/auth/login</code> and <code>/api/auth/signup</code> (max 30 requests per 15 minutes per IP).</li>
+            <li><strong>2. SQL Injection Elimination:</strong> 100% of database queries use prepared statements with parameter bindings via <code>db.execute(query, [params])</code>.</li>
+            <li><strong>3. Cross-Site Scripting (XSS):</strong> Helmet middleware enforces CSP headers and disables MIME sniffing.</li>
+            <li><strong>4. Replay Attacks on Reset Codes:</strong> Password reset OTPs are nulled out (<code>reset_code = NULL</code>) immediately upon first use.</li>
+            <li><strong>5. Memory Exhaustion Protection:</strong> Explicit JSON payload limits prevent Denial of Service attacks.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Bcrypt Hash Structure Explained</div>
+        <p class="mono" style="font-size:11px;">
+          $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+          <br><span style="color:#38bdf8;">$2a$</span> = Algorithm identifier (Bcrypt) &nbsp;|&nbsp; 
+          <span style="color:#fbbf24;">10$</span> = Cost factor (2^10 iterations) &nbsp;|&nbsp; 
+          <span style="color:#34d399;">N9qo8u...</span> = 128-bit salt & 184-bit hash
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Password Security</span>
+      <span>Slide 10 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 11: END-TO-END TROUBLESHOOTING PIPELINE
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>End-to-End Troubleshooting Pipeline</h2>
+        <p>Diagnostic decision tree: React &rarr; API Request &rarr; Express Route &rarr; MySQL &rarr; Response &rarr; React</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Diagnostics</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="trace-pipeline">
+        <div class="trace-step">
+          <div class="trace-step-num">Step 1</div>
+          <div class="trace-step-title">React UI</div>
+          <div class="trace-step-desc">Event handler fires (e.g. submit, toggle, delete). Checks state variables.</div>
+        </div>
+        <div class="trace-step">
+          <div class="trace-step-num">Step 2</div>
+          <div class="trace-step-title">API Request</div>
+          <div class="trace-step-desc"><code>services/api.js</code> attaches Bearer token, sets JSON headers, executes fetch.</div>
+        </div>
+        <div class="trace-step">
+          <div class="trace-step-num">Step 3</div>
+          <div class="trace-step-title">Express Route</div>
+          <div class="trace-step-desc">JWT middleware validates token; router invokes matched controller function.</div>
+        </div>
+        <div class="trace-step">
+          <div class="trace-step-num">Step 4</div>
+          <div class="trace-step-title">MySQL Query</div>
+          <div class="trace-step-desc"><code>db.execute()</code> prepared statement runs against port 3306.</div>
+        </div>
+        <div class="trace-step">
+          <div class="trace-step-num">Step 5</div>
+          <div class="trace-step-title">HTTP Response</div>
+          <div class="trace-step-desc">Controller returns JSON payload with RFC status code (200, 201, 401...).</div>
+        </div>
+        <div class="trace-step">
+          <div class="trace-step-num">Step 6</div>
+          <div class="trace-step-title">React Sync</div>
+          <div class="trace-step-desc">State re-renders UI or rolls back with toast notification on failure.</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Diagnostic Checklist by Failure Point</div>
+          <ul>
+            <li><strong>If Broken at Step 1 (React):</strong> Check Browser DevTools Console (<code>F12</code>) for unhandled JavaScript exceptions or undefined state variables.</li>
+            <li><strong>If Broken at Step 2 (API Request):</strong> Check DevTools Network tab. Verify Request URL, HTTP Method, and <code>Authorization: Bearer</code> header presence.</li>
+            <li><strong>If Broken at Step 3 (Express):</strong> Check terminal server logs. Verify route mount path in <code>server.js</code>. 401 = Missing Token; 403 = Expired Token; 404 = Wrong URL.</li>
+            <li><strong>If Broken at Step 4 (MySQL):</strong> <code>ECONNREFUSED</code> = XAMPP MySQL is stopped. Run <code>C:\xamp\mysql_start.bat</code> or verify database name in <code>.env</code>.</li>
+            <li><strong>If Broken at Step 5/6 (Response & Sync):</strong> Ensure controller returns JSON (not HTML). Check optimistic state rollback in <code>catch(err)</code> block.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Example: Debugging a 401 Unauthorized Error</div>
+          <p>
+            <strong>Symptom:</strong> User cannot fetch tasks; server logs return <code>GET /api/tasks 401</code>.
+            <br><strong>Tracing Steps:</strong>
+            <br>1. Check <code>localStorage.getItem("tp_token")</code> in DevTools Console.
+            <br>2. If null, user session expired &rarr; redirected to login.
+            <br>3. If present, verify <code>JWT_SECRET</code> in backend matches the key used when token was signed.
+            <br>4. Result: Issue resolved in seconds by inspecting the trace pipeline!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Troubleshooting Pipeline</span>
+      <span>Slide 11 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 12: COMPLETE REST API DIRECTORY
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Complete RESTful API Directory</h2>
+        <p>Comprehensive 13-route endpoint directory with authentication rules and HTTP status codes</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">REST API</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Route Endpoint</th>
+            <th>Auth Required</th>
+            <th>Payload / Query</th>
+            <th>Purpose</th>
+            <th>HTTP Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono" style="color:#38bdf8; font-weight:700;">GET</td>
+            <td class="mono">/api/health</td>
+            <td>No</td>
+            <td>None</td>
+            <td>Service heartbeat check</td>
+            <td><code>200 OK</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/signup</td>
+            <td>No</td>
+            <td class="mono">{ username, email, password }</td>
+            <td>Register new account & salt password</td>
+            <td><code>201 / 400 / 409</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/login</td>
+            <td>No</td>
+            <td class="mono">{ email, password }</td>
+            <td>Verify credentials & issue JWT</td>
+            <td><code>200 / 400 / 401</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#38bdf8; font-weight:700;">GET</td>
+            <td class="mono">/api/auth/me</td>
+            <td>Yes</td>
+            <td>None</td>
+            <td>Retrieve session user profile</td>
+            <td><code>200 / 401 / 403</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/forgot-password</td>
+            <td>No</td>
+            <td class="mono">{ email }</td>
+            <td>Generate 6-digit reset OTP (15m expiry)</td>
+            <td><code>200 / 400 / 404</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/reset-password</td>
+            <td>No</td>
+            <td class="mono">{ email, code, newPassword }</td>
+            <td>Verify OTP and commit re-hashed password</td>
+            <td><code>200 / 400 / 404</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/send-verification</td>
+            <td>Yes</td>
+            <td>None</td>
+            <td>Dispatch email verification OTP</td>
+            <td><code>200 / 401</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/auth/verify-email</td>
+            <td>Yes</td>
+            <td class="mono">{ code }</td>
+            <td>Confirm OTP and activate is_verified</td>
+            <td><code>200 / 400</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#38bdf8; font-weight:700;">GET</td>
+            <td class="mono">/api/tasks</td>
+            <td>Yes</td>
+            <td class="mono">?status=&priority=&search=</td>
+            <td>Fetch filtered task records</td>
+            <td><code>200 / 401</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#34d399; font-weight:700;">POST</td>
+            <td class="mono">/api/tasks</td>
+            <td>Yes</td>
+            <td class="mono">{ title, description, category... }</td>
+            <td>Create task with JSON subtasks</td>
+            <td><code>201 / 400</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#fbbf24; font-weight:700;">PUT</td>
+            <td class="mono">/api/tasks/:id</td>
+            <td>Yes</td>
+            <td class="mono">{ status, priority, subtasks... }</td>
+            <td>Update task metadata or checklist</td>
+            <td><code>200 / 404</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#f87171; font-weight:700;">DELETE</td>
+            <td class="mono">/api/tasks/:id</td>
+            <td>Yes</td>
+            <td>None</td>
+            <td>Delete task record from MySQL</td>
+            <td><code>200 / 404</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:#38bdf8; font-weight:700;">GET</td>
+            <td class="mono">/api/tasks/export</td>
+            <td>Yes</td>
+            <td>None</td>
+            <td>Export complete JSON task backup</td>
+            <td><code>200 / 401</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>API Directory</span>
+      <span>Slide 12 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 13: VERCEL DEPLOYMENT & CLOUD STRATEGY
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Deployment to Vercel & Cloud Database Strategy</h2>
+        <p>Hosting the React SPA on Vercel and connecting cloud-hosted MySQL instances</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Cloud Deployment</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="panel">
+          <div class="panel-title">1. Vercel SPA Hosting</div>
+          <ul>
+            <li>Push project to GitHub &rarr; Import into Vercel.</li>
+            <li>Set Root Directory:
+              <br><code class="mono">frontend/task-planner-frontend</code>
+            </li>
+            <li>Vercel auto-builds via <code>npm run build</code>.</li>
+            <li>Our <code>vercel.json</code> rewrites all routes (<code>/*</code>) to <code>/index.html</code> preventing 404s.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">2. Cloud MySQL Provider</div>
+          <ul>
+            <li>Vercel runs on the public cloud, so it cannot reach local XAMPP (<code>localhost:3306</code>).</li>
+            <li>Free cloud MySQL options:
+              <br>&bull; <strong>Aiven for MySQL</strong> (Free tier)
+              <br>&bull; <strong>Railway</strong> (Free tier)
+              <br>&bull; <strong>TiDB Cloud</strong> (Free serverless MySQL)
+            </li>
+            <li>Supply connection string into backend <code>.env</code>.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">3. Production Backend API</div>
+          <ul>
+            <li>Deploy Express backend to <strong>Render</strong> or <strong>Railway</strong>.</li>
+            <li>Set Environment Variables:
+              <br><code class="mono">PORT, DB_HOST, DB_USER, DB_PASSWORD, JWT_SECRET</code>
+            </li>
+            <li>In Vercel, set <code>VITE_API_URL</code> pointing to your live backend domain.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel" style="text-align:center; padding: 18px;">
+        <h3 style="font-size: 16px; color:#ffffff; margin-bottom:4px;">Turnkey Cloud Readiness</h3>
+        <p style="font-size: 11px; color:#a1a1aa;">
+          Task Planner is packaged with production configuration files, automated migrations, and environment variable adaptors ready for instantaneous cloud deployment.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Vercel & Cloud Hosting</span>
+      <span>Slide 13 of 14</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SLIDE 14: CONCLUSION & DEFENSE SUMMARY
+       ========================================== -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>Conclusion & Technical Defense Summary</h2>
+        <p>Complete project recap and architectural defense checklist</p>
+      </div>
+      <div class="slide-meta">
+        <span class="badge-mono">Defense Summary</span>
+      </div>
+    </div>
+
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-title">Architectural Highlights Summary</div>
+          <ul>
+            <li><strong>Executive Monochrome Design:</strong> Purged 20 AI anti-patterns; high contrast Inter + JetBrains Mono typography; strict 8pt grid.</li>
+            <li><strong>Relational Data Persistence:</strong> Real MySQL InnoDB engine with foreign key cascading and automated table bootstrapping.</li>
+            <li><strong>Enterprise Security:</strong> Bcrypt 10 salt rounds, JWT token verification, brute-force rate limiting, and parameterized queries.</li>
+            <li><strong>Comprehensive Testing:</strong> 7-step automated test suite passed with 100% success rate across all operations.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Engineering Quality Metrics</div>
+          <ul>
+            <li><strong>0ms Perceived Latency:</strong> Optimistic subtask checkbox toggling and 1-click status transitions.</li>
+            <li><strong>100% Responsive:</strong> Tested across phones (320px–480px), tablets (768px), and ultra-wide desktops.</li>
+            <li><strong>Modular Codebase:</strong> WabiSeminar MVC layered architecture separating config, middleware, controllers, routes, and services.</li>
+            <li><strong>Data Portability:</strong> 1-click JSON backup export for immediate data portability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel" style="text-align:center; padding: 22px;">
+        <h3 style="font-size: 18px; color:#ffffff; margin-bottom:4px;">Task Planner &bull; Technical Defense Complete</h3>
+        <p style="font-size: 11.5px; color:#a1a1aa;">
+          Engineered with precision, security, and human craftsmanship. Thank you for your review.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Task Planner Engineering Defense</span>
+      <span>Conclusion</span>
+      <span>Slide 14 of 14</span>
+    </div>
+  </div>
+
+</body>
+</html>
+

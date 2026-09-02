@@ -1,16 +1,18 @@
 {
   "name": "task-planner",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Full-Stack Task Planner Application",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --prefix frontend/task-planner-frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,magenta\" \"npm run start:backend\" \"npm run dev:frontend\"",
+    "start:backend": "npm start --prefix backend",
+    "build:frontend": "npm run build --prefix frontend/task-planner-frontend",
+    "init-db": "npm run init-db --prefix backend"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "express": "^5.2.1"
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

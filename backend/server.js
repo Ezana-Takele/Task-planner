@@ -1,15 +1,80 @@
-const express = require('express');
+// backend/server.js
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
+
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const initializeDatabase = require("./init-db");
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+// Security and Core Middleware
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: true, limit: "100mb" }));
+app.use(helmet());
+app.use(cors());
 
-app.get('/', (req, res) => {
-  res.send('Task Planner API running');
+// HTTP Request Logging
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms"));
+
+// Root Welcome Route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Task Planner backend is running",
+    version: "2.1.0"
+  });
 });
 
-const tasks = require('./routes/tasks');  // <-- must match filename
-app.use('/api', tasks);
-
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+// Health Check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+// Modular Routes (WabiSeminar Pattern)
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Resource not found", error: "Resource not found" });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("[ERROR] Unhandled server exception:", err.stack || err.message);
+  res.status(500).json({ message: "Internal server error", error: "Internal server error" });
+});
+
+// Start Server & Auto-Initialize Database
+async function startServer() {
+  try {
+    await initializeDatabase();
+  } catch (err) {
+    console.warn("[WARN] Database initialization notice:", err.message);
+  }
+
+  const server = app.listen(PORT, () => {
+    console.log(`Task Planner backend running on port ${PORT}`);
+  });
+
+  const shutdown = () => {
+    console.log("[INFO] Gracefully stopping server...");
+    server.close(() => {
+      console.log("[INFO] Server stopped.");
+      process.exit(0);
+    });
+  };
+
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;
