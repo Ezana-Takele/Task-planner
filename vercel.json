@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "npm --prefix frontend/task-planner-frontend install && npm --prefix frontend/task-planner-frontend run build && node -e \"require('fs').cpSync('frontend/task-planner-frontend/dist', 'dist', {recursive: true})\"",
   "outputDirectory": "dist",
   "rewrites": [
     {
