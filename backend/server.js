@@ -34,9 +34,11 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Modular Routes (WabiSeminar Pattern)
+// Modular Routes (Handles both direct and serverless rewrites)
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/tasks", taskRoutes);
 
 // 404 Handler
 app.use((req, res) => {

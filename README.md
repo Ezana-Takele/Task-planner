@@ -77,3 +77,4 @@ npm run dev
 - **Zero Plaintext Passwords**: Passwords are salted with 10 cryptographic rounds of Bcrypt and stored exclusively in the database server.
 - **SQL Injection Prevention**: All queries use parameterized prepared statements (`db.execute()`).
 - **Defensive Rate Limiting**: All authentication endpoints are protected against brute-force attacks via `express-rate-limit`.
+
