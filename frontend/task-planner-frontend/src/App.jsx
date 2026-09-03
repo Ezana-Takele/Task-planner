@@ -27,7 +27,9 @@ import {
   Share2,
   Users,
   UserCheck,
-  UserMinus
+  UserMinus,
+  User,
+  Layers
 } from "lucide-react";
 import "./App.css";
 import { apiRequest } from "./services/api";

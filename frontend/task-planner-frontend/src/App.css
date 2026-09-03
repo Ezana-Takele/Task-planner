@@ -982,6 +982,7 @@ h1, h2, h3, h4 {
   color: var(--text-muted);
   line-height: 1.45;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -2001,6 +2002,7 @@ html, body {
 
 .hero-gradient-text {
   background: linear-gradient(135deg, #38bdf8 0%, #ffffff 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
