@@ -699,7 +699,7 @@ function App() {
           </div>
         </header>
 
-        {/* Hero Section: Split Showcase & Auth Card */}
+        {/* Hero Section */}
         <main className="landing-main">
           <section className="landing-hero-section">
             <div className="landing-hero-grid">
