@@ -673,7 +673,7 @@ function App() {
             </div>
 
             <nav className="landing-nav-links">
-              <a href="#features" className="nav-anchor">Features & Collaboration</a>
+              <a href="#features" className="nav-anchor">Features</a>
             </nav>
 
             <div className="landing-nav-actions">
@@ -710,7 +710,7 @@ function App() {
                 </h1>
 
                 <p className="hero-description">
-                  Organize your projects with visual Kanban and List views, track subtask progress, and share tasks instantly with your team.
+                  A simple, visual task planner to organize daily work with Kanban boards, subtask checklists, and instant team sharing.
                 </p>
 
                 {/* 3D Hero Workspace Preview */}
@@ -930,8 +930,8 @@ function App() {
           {/* Section: Features & Team Collaboration */}
           <section className="landing-section" id="features">
             <div className="section-header-centered">
-              <span className="section-eyebrow">CORE CAPABILITIES</span>
-              <h2 className="section-heading">Everything you need to manage work</h2>
+              <span className="section-eyebrow">CORE FEATURES</span>
+              <h2 className="section-heading">Everything you need to manage tasks</h2>
             </div>
 
             <div className="collab-showcase-grid">
