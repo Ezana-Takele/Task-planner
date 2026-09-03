@@ -674,6 +674,9 @@ function App() {
 
             <nav className="landing-nav-links">
               <a href="#features" className="nav-anchor">Features</a>
+              <a href="#collaboration" className="nav-anchor">Collaboration</a>
+              <a href="#security" className="nav-anchor">Security</a>
+              <a href="#architecture" className="nav-anchor">Architecture</a>
             </nav>
 
             <div className="landing-nav-actions">
@@ -699,25 +702,30 @@ function App() {
           </div>
         </header>
 
-        {/* Hero Section */}
+        {/* Hero Section: Split Showcase & Auth Card */}
         <main className="landing-main">
           <section className="landing-hero-section">
             <div className="landing-hero-grid">
               {/* Left Column: Hero Value Proposition & 3D Workspace */}
               <div className="hero-content">
+                <div className="hero-pill">
+                  <span className="hero-pip">●</span> Cloud-Native Task Orchestration Platform
+                </div>
+
                 <h1 className="hero-headline">
-                  Plan, Track, and <span className="hero-gradient-text">Collaborate</span>.
+                  Deliver with <span className="hero-gradient-text">Precision</span>.<br />
+                  Collaborate with <span className="hero-gradient-text">Velocity</span>.
                 </h1>
 
                 <p className="hero-description">
-                  A simple, visual task planner to organize daily work with Kanban boards, subtask checklists, and instant team sharing.
+                  The executive task planner engineered for high-performing engineering and design teams. Track deliverables across Kanban and List views, estimate subtask effort, and share tasks in real-time by numeric User ID.
                 </p>
 
                 {/* 3D Hero Workspace Preview */}
                 <div className="hero-image-frame">
                   <img
                     src="/images/hero_3d.jpg"
-                    alt="Task Planner Workspace"
+                    alt="Executive 3D Task Matrix & Workspace"
                     className="hero-3d-img"
                     onError={(e) => {
                       e.target.style.display = "none";
@@ -725,11 +733,34 @@ function App() {
                   />
                   <div className="hero-image-overlay">
                     <div className="hero-feature-pill">
-                      <CheckCircle2 size={13} className="text-emerald" /> Kanban & List Views
+                      <CheckCircle2 size={13} className="text-emerald" /> 3D Kanban & List Views
                     </div>
                     <div className="hero-feature-pill">
-                      <Share2 size={13} className="text-cyan" /> Team Task Sharing
+                      <ShieldCheck size={13} className="text-cyan" /> 2-Step Email OTP
                     </div>
+                    <div className="hero-feature-pill">
+                      <Share2 size={13} className="text-cyan" /> User ID Sharing (#X)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Architecture Badges */}
+                <div className="hero-specs-row">
+                  <div className="spec-card">
+                    <div className="spec-val">React 19 + Vite</div>
+                    <div className="spec-label">Sub-Second Frontend</div>
+                  </div>
+                  <div className="spec-card">
+                    <div className="spec-val">Node.js Express</div>
+                    <div className="spec-label">Modular MVC Backend</div>
+                  </div>
+                  <div className="spec-card">
+                    <div className="spec-val">Railway Cloud</div>
+                    <div className="spec-label">Managed MySQL Database</div>
+                  </div>
+                  <div className="spec-card">
+                    <div className="spec-val">Vercel Edge</div>
+                    <div className="spec-label">Serverless Deployment</div>
                   </div>
                 </div>
               </div>
@@ -745,18 +776,18 @@ function App() {
 
                     <h2 className="auth-title">
                       {authOtpPending
-                        ? "Verification Code"
+                        ? "Security Verification"
                         : authMode === "login"
-                        ? "Sign In"
-                        : "Create Account"}
+                        ? "Sign in to workspace"
+                        : "Create your account"}
                     </h2>
 
                     <p className="auth-sub">
                       {authOtpPending
-                        ? `Enter the 6-digit code sent to ${authOtpEmail}`
+                        ? `Enter the 6-digit code sent to ${authOtpEmail} to complete sign in.`
                         : authMode === "login"
-                        ? "Sign in to manage your tasks"
-                        : "Create a free account to get started"}
+                        ? "Enter your credentials to access your tasks."
+                        : "Get started with your team workspace today."}
                     </p>
                   </div>
 
@@ -765,7 +796,7 @@ function App() {
                     <div className="security-shield-banner">
                       <img
                         src="/images/security_3d.jpg"
-                        alt="Verification Shield"
+                        alt="Cybersecurity Verification Shield"
                         className="security-shield-img"
                         onError={(e) => {
                           e.target.style.display = "none";
@@ -815,7 +846,7 @@ function App() {
                   {authOtpPending ? (
                     <form onSubmit={handleVerifyLoginOtpSubmit} className="ui-form">
                       <div className="form-group">
-                        <label>6-Digit Code</label>
+                        <label>6-Digit Verification Code</label>
                         <input
                           type="text"
                           placeholder="123456"
@@ -828,7 +859,7 @@ function App() {
                       </div>
 
                       <button type="submit" className="btn-primary" disabled={authLoading || !authOtpCode.trim()}>
-                        {authLoading ? "Verifying..." : "Confirm & Sign In"}
+                        {authLoading ? "Verifying..." : "Verify & Sign In"}
                       </button>
 
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "14px" }}>
@@ -841,7 +872,7 @@ function App() {
                             setAuthError("");
                           }}
                         >
-                          &larr; Back
+                          &larr; Back to {authMode === "login" ? "Sign In" : "Sign Up"}
                         </button>
 
                         <button
@@ -861,7 +892,7 @@ function App() {
                           <label>Username</label>
                           <input
                             type="text"
-                            placeholder="Your name"
+                            placeholder="johndoe"
                             value={authUsername}
                             onChange={(e) => setAuthUsername(e.target.value)}
                             required
@@ -870,7 +901,7 @@ function App() {
                       )}
 
                       <div className="form-group">
-                        <label>Email</label>
+                        <label>Email Address</label>
                         <input
                           type="email"
                           placeholder="name@company.com"
@@ -918,8 +949,13 @@ function App() {
                       </div>
 
                       <button type="submit" className="btn-primary" disabled={authLoading}>
-                        {authLoading ? "Please wait..." : authMode === "login" ? "Sign In" : "Create Account"}
+                        {authLoading ? "Processing..." : authMode === "login" ? "Sign In & Get OTP" : "Create Account & Verify"}
                       </button>
+
+                      <div className="auth-footer-badge">
+                        <ShieldCheck size={13} className="text-cyan" />
+                        <span>Protected by 2-Step Cryptographic Email Verification</span>
+                      </div>
                     </form>
                   )}
                 </div>
@@ -927,18 +963,21 @@ function App() {
             </div>
           </section>
 
-          {/* Section: Features & Team Collaboration */}
-          <section className="landing-section" id="features">
+          {/* Section 2: Real-Time Team Collaboration Spotlight */}
+          <section className="landing-section" id="collaboration">
             <div className="section-header-centered">
-              <span className="section-eyebrow">CORE FEATURES</span>
-              <h2 className="section-heading">Everything you need to manage tasks</h2>
+              <span className="section-eyebrow">MULTI-USER COLLABORATION</span>
+              <h2 className="section-heading">Share Deliverables Instantly by User ID</h2>
+              <p className="section-sub">
+                Collaborate with colleagues seamlessly. No complicated invites needed — just enter their numeric <strong>User ID (#X)</strong> for instant real-time synchronization.
+              </p>
             </div>
 
             <div className="collab-showcase-grid">
               <div className="collab-image-card">
                 <img
                   src="/images/collab_3d.jpg"
-                  alt="Team Collaboration"
+                  alt="3D Team Collaboration Network"
                   className="collab-3d-img"
                   onError={(e) => {
                     e.target.style.display = "none";
@@ -949,39 +988,82 @@ function App() {
               <div className="collab-features-list">
                 <div className="collab-feature-item">
                   <div className="collab-icon-box">
-                    <CheckCircle2 size={18} />
-                  </div>
-                  <div>
-                    <h3 className="collab-feature-title">Kanban & List Views</h3>
-                    <p className="collab-feature-desc">
-                      Organize tasks into To-Do, In Progress, and Completed states with priorities, due dates, and categories.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="collab-feature-item">
-                  <div className="collab-icon-box">
                     <User size={18} />
                   </div>
                   <div>
-                    <h3 className="collab-feature-title">Instant Task Sharing</h3>
+                    <h3 className="collab-feature-title">Numeric User ID Resolution</h3>
                     <p className="collab-feature-desc">
-                      Share any task directly with team members using their unique User ID with Edit or View permissions.
+                      Every team member has a unique ID (e.g. <code>ID: #10</code>) prominently displayed in their topbar. Click to copy and share in one step.
                     </p>
                   </div>
                 </div>
 
                 <div className="collab-feature-item">
                   <div className="collab-icon-box">
-                    <Layers size={18} />
+                    <ShieldCheck size={18} />
                   </div>
                   <div>
-                    <h3 className="collab-feature-title">Subtasks & Progress Tracking</h3>
+                    <h3 className="collab-feature-title">Granular Permission Matrix</h3>
                     <p className="collab-feature-desc">
-                      Break complex tasks down into actionable checklists and monitor progress percentage automatically.
+                      Choose between <strong>Can Edit & Complete Subtasks</strong> (read/write access) or <strong>View Only</strong> (read-only monitoring).
                     </p>
                   </div>
                 </div>
+
+                <div className="collab-feature-item">
+                  <div className="collab-icon-box">
+                    <CheckCircle2 size={18} />
+                  </div>
+                  <div>
+                    <h3 className="collab-feature-title">Subtask Checklist Tracking</h3>
+                    <p className="collab-feature-desc">
+                      Break tasks into clear subtasks with estimated minutes and real-time progress calculations automatically updating across the workspace.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 3: Architecture & Security Pillars */}
+          <section className="landing-section" id="features">
+            <div className="section-header-centered">
+              <span className="section-eyebrow">ENGINEERING EXCELLENCE</span>
+              <h2 className="section-heading">Built for Speed, Security & Scalability</h2>
+              <p className="section-sub">
+                Enterprise-grade architecture following clean MVC separation, connection pooling, and defense-in-depth security.
+              </p>
+            </div>
+
+            <div className="features-grid">
+              <div className="feature-pillar-card">
+                <div className="feature-pillar-header">
+                  <div className="pillar-icon-box"><ShieldCheck size={20} /></div>
+                  <h3 className="pillar-title">Cryptographic Security</h3>
+                </div>
+                <p className="pillar-desc">
+                  Zero plain text passwords. Passwords hashed with 10 cryptographic rounds of Bcrypt. Protected by rate limiting and signed JWT Bearer tokens.
+                </p>
+              </div>
+
+              <div className="feature-pillar-card">
+                <div className="feature-pillar-header">
+                  <div className="pillar-icon-box"><Layers size={20} /></div>
+                  <h3 className="pillar-title">Subtask Velocity Engine</h3>
+                </div>
+                <p className="pillar-desc">
+                  Interactive checklist items with dynamic percentage completion scores, time estimation in minutes, and multi-predicate search filtering.
+                </p>
+              </div>
+
+              <div className="feature-pillar-card">
+                <div className="feature-pillar-header">
+                  <div className="pillar-icon-box"><Share2 size={20} /></div>
+                  <h3 className="pillar-title">Cloud MySQL & Serverless</h3>
+                </div>
+                <p className="pillar-desc">
+                  Decoupled from local storage with Railway Cloud MySQL. Unified monorepo serverless deployment on Vercel Edge with zero CORS friction.
+                </p>
               </div>
             </div>
           </section>
@@ -995,7 +1077,11 @@ function App() {
               <span className="brand-title">taskplanner</span>
             </div>
             <div className="footer-meta">
-              <span>Task Planner &copy; {new Date().getFullYear()}</span>
+              <span>Academic Defense Project • Ezana Takele</span>
+              <span>•</span>
+              <a href="https://github.com/Ezana-Takele/Task-planner" target="_blank" rel="noreferrer" className="footer-link">
+                GitHub Repository
+              </a>
             </div>
           </div>
         </footer>
