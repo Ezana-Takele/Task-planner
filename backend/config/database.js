@@ -16,7 +16,11 @@ function getPoolConfig() {
       database: url.pathname.replace(/^\//, ""),
       waitForConnections: true,
       connectionLimit: 10,
-      queueLimit: 0,
+      maxIdle: 10,
+      idleTimeout: 30000,
+      connectTimeout: 20000,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
       ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {})
     };
   }
@@ -34,7 +38,11 @@ function getPoolConfig() {
     database: process.env.DB_NAME || "task_planner2",
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
+    maxIdle: 10,
+    idleTimeout: 30000,
+    connectTimeout: 20000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
     ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {})
   };
 }
