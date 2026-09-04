@@ -1206,6 +1206,31 @@ function App() {
       {/* Main Workspace Stage */}
       <main className="executive-stage">
         <div className="stage-container">
+          {/* Executive Focus Banner */}
+          <section className="dashboard-focus-banner">
+            <div className="focus-banner-content">
+              <div className="focus-banner-badge">
+                <span className="badge-dot"></span>
+                <span>WORKSPACE OVERVIEW</span>
+              </div>
+              <h2 className="focus-banner-title">
+                Welcome back, <span className="text-gradient">{user?.name || user?.email?.split("@")[0] || "Planner"}</span>
+              </h2>
+              <p className="focus-banner-sub">
+                {stats.pending > 0
+                  ? `You have ${stats.pending} ${stats.pending === 1 ? "task" : "tasks"} ready in your queue today.`
+                  : "All caught up! Create a new task or review completed deliverables."}
+              </p>
+            </div>
+            <div className="focus-banner-art">
+              <img
+                src={theme === "light" ? "/images/desk_light.jpg" : "/images/desk_dark.jpg"}
+                alt="Workspace Setup"
+                className="focus-banner-img"
+              />
+            </div>
+          </section>
+
           {/* Executive Metrics Overview Deck */}
           <section className="metrics-deck">
             <div
