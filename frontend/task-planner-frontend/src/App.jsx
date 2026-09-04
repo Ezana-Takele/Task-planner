@@ -34,7 +34,17 @@ import {
 import "./App.css";
 import { apiRequest } from "./services/api";
 
-const CATEGORIES = ["General", "Engineering", "Design", "Product", "Operations", "Personal"];
+const CATEGORIES = [
+  "General",
+  "Development",
+  "Bugs & Fixes",
+  "Design",
+  "Work",
+  "Personal",
+  "Learning & Research",
+  "Finance",
+  "Health"
+];
 
 function App() {
   // Theme Mode: 'dark' (obsidian) | 'light' (studio)
@@ -102,7 +112,7 @@ function App() {
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newPriority, setNewPriority] = useState("medium");
-  const [newCategory, setNewCategory] = useState("Engineering");
+  const [newCategory, setNewCategory] = useState("General");
   const [newStatus, setNewStatus] = useState("pending");
   const [newEstMinutes, setNewEstMinutes] = useState(30);
   const [newDueDate, setNewDueDate] = useState("");
@@ -465,7 +475,7 @@ function App() {
       setNewTitle("");
       setNewDescription("");
       setNewPriority("medium");
-      setNewCategory("Engineering");
+      setNewCategory("General");
       setNewStatus("pending");
       setNewDueDate("");
       setNewSubtasks([]);
