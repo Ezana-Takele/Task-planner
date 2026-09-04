@@ -671,14 +671,10 @@ function App() {
           <div className="landing-nav-container">
             <div className="brand-badge">
               <span className="brand-logo-box">EZ</span>
-              <span className="brand-title">taskplanner</span>
+              <span className="brand-title">TaskPlanner</span>
             </div>
 
             <nav className="landing-nav-links">
-              <a href="#features" className="nav-anchor">Features</a>
-              <a href="#collaboration" className="nav-anchor">Collaboration</a>
-              <a href="#security" className="nav-anchor">Security</a>
-              <a href="#architecture" className="nav-anchor">Architecture</a>
             </nav>
 
             <div className="landing-nav-actions">
@@ -733,37 +729,6 @@ function App() {
                       e.target.style.display = "none";
                     }}
                   />
-                  <div className="hero-image-overlay">
-                    <div className="hero-feature-pill">
-                      <CheckCircle2 size={13} className="text-emerald" /> 3D Kanban & List Views
-                    </div>
-                    <div className="hero-feature-pill">
-                      <ShieldCheck size={13} className="text-cyan" /> 2-Step Email OTP
-                    </div>
-                    <div className="hero-feature-pill">
-                      <Share2 size={13} className="text-cyan" /> User ID Sharing (#X)
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Architecture Badges */}
-                <div className="hero-specs-row">
-                  <div className="spec-card">
-                    <div className="spec-val">React 19 + Vite</div>
-                    <div className="spec-label">Sub-Second Frontend</div>
-                  </div>
-                  <div className="spec-card">
-                    <div className="spec-val">Node.js Express</div>
-                    <div className="spec-label">Modular MVC Backend</div>
-                  </div>
-                  <div className="spec-card">
-                    <div className="spec-val">Railway Cloud</div>
-                    <div className="spec-label">Managed MySQL Database</div>
-                  </div>
-                  <div className="spec-card">
-                    <div className="spec-val">Vercel Edge</div>
-                    <div className="spec-label">Serverless Deployment</div>
-                  </div>
                 </div>
               </div>
 
@@ -773,7 +738,7 @@ function App() {
                   <div className="auth-header">
                     <div className="brand-badge" style={{ justifyContent: "center", marginBottom: "8px" }}>
                       <span className="brand-logo-box">EZ</span>
-                      <span className="brand-title">taskplanner</span>
+                      <span className="brand-title">TaskPlanner</span>
                     </div>
 
                     <h2 className="auth-title">
@@ -1027,48 +992,6 @@ function App() {
             </div>
           </section>
 
-          {/* Section 3: Architecture & Security Pillars */}
-          <section className="landing-section" id="features">
-            <div className="section-header-centered">
-              <span className="section-eyebrow">ENGINEERING EXCELLENCE</span>
-              <h2 className="section-heading">Built for Speed, Security & Scalability</h2>
-              <p className="section-sub">
-                Enterprise-grade architecture following clean MVC separation, connection pooling, and defense-in-depth security.
-              </p>
-            </div>
-
-            <div className="features-grid">
-              <div className="feature-pillar-card">
-                <div className="feature-pillar-header">
-                  <div className="pillar-icon-box"><ShieldCheck size={20} /></div>
-                  <h3 className="pillar-title">Cryptographic Security</h3>
-                </div>
-                <p className="pillar-desc">
-                  Zero plain text passwords. Passwords hashed with 10 cryptographic rounds of Bcrypt. Protected by rate limiting and signed JWT Bearer tokens.
-                </p>
-              </div>
-
-              <div className="feature-pillar-card">
-                <div className="feature-pillar-header">
-                  <div className="pillar-icon-box"><Layers size={20} /></div>
-                  <h3 className="pillar-title">Subtask Velocity Engine</h3>
-                </div>
-                <p className="pillar-desc">
-                  Interactive checklist items with dynamic percentage completion scores, time estimation in minutes, and multi-predicate search filtering.
-                </p>
-              </div>
-
-              <div className="feature-pillar-card">
-                <div className="feature-pillar-header">
-                  <div className="pillar-icon-box"><Share2 size={20} /></div>
-                  <h3 className="pillar-title">Cloud MySQL & Serverless</h3>
-                </div>
-                <p className="pillar-desc">
-                  Decoupled from local storage with Railway Cloud MySQL. Unified monorepo serverless deployment on Vercel Edge with zero CORS friction.
-                </p>
-              </div>
-            </div>
-          </section>
         </main>
 
         {/* Landing Page Footer */}
@@ -1076,7 +999,7 @@ function App() {
           <div className="landing-footer-container">
             <div className="brand-badge">
               <span className="brand-logo-box">EZ</span>
-              <span className="brand-title">taskplanner</span>
+              <span className="brand-title">TaskPlanner</span>
             </div>
             <div className="footer-meta">
               <span>Academic Defense Project • Ezana Takele</span>
