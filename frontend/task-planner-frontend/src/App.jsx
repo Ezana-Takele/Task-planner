@@ -722,8 +722,8 @@ function App() {
                 {/* 3D Hero Workspace Preview */}
                 <div className="hero-image-frame">
                   <img
-                    src="/images/hero_3d.jpg"
-                    alt="Executive 3D Task Matrix & Workspace"
+                    src="/images/calendar_board.jpg"
+                    alt="Calendar Task Board with Kanban Workflow"
                     className="hero-3d-img"
                     onError={(e) => {
                       e.target.style.display = "none";
