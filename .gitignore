@@ -17,3 +17,8 @@ frontend/task-planner-frontend/dist/
 .DS_Store
 Thumbs.db
 .skills/
+
+# Presentation & PDF outputs (keep off GitHub)
+*.pdf
+presentation*.html
+presentation/
