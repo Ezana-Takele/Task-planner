@@ -8,9 +8,19 @@ function createTransporter() {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
-  if (!host || !user || !pass) {
-    return null; // SMTP not configured; use simulated dev mode
+  if (!user || !pass) {
+    return null; // SMTP not configured
   }
+
+  // If using Gmail or host includes gmail
+  if (process.env.SMTP_SERVICE === "gmail" || (host && host.includes("gmail"))) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass }
+    });
+  }
+
+  if (!host) return null;
 
   const port = parseInt(process.env.SMTP_PORT || "587", 10);
   const isSecure = process.env.SMTP_SECURE === "true" || port === 465;
@@ -23,7 +33,7 @@ function createTransporter() {
   });
 }
 
-const FROM_ADDRESS = process.env.SMTP_FROM || `"Task Planner" <no-reply@taskplanner.io>`;
+const FROM_ADDRESS = process.env.SMTP_FROM || (process.env.SMTP_USER ? `"TaskPlanner" <${process.env.SMTP_USER}>` : `"TaskPlanner" <no-reply@taskplanner.io>`);
 
 /**
  * Sends a 6-digit Email Verification Code
@@ -32,8 +42,8 @@ async function sendVerificationEmail(toEmail, code) {
   const transporter = createTransporter();
 
   if (!transporter) {
-    console.log(`[EMAIL NOTICE] SMTP not configured. Verification code for ${toEmail}: ${code}`);
-    return { success: true, devMode: true, code };
+    console.error(`[EMAIL CONFIG WARNING] Cannot dispatch real email to ${toEmail}: SMTP credentials (SMTP_USER & SMTP_PASS) are not set in environment.`);
+    return { success: false, error: "SMTP credentials not configured in environment" };
   }
 
   const html = `
@@ -87,8 +97,8 @@ async function sendPasswordResetEmail(toEmail, code) {
   const transporter = createTransporter();
 
   if (!transporter) {
-    console.log(`[EMAIL NOTICE] SMTP not configured. Password reset code for ${toEmail}: ${code}`);
-    return { success: true, devMode: true, code };
+    console.error(`[EMAIL CONFIG WARNING] Cannot dispatch password reset email to ${toEmail}: SMTP credentials are not set in environment.`);
+    return { success: false, error: "SMTP credentials not configured in environment" };
   }
 
   const html = `

@@ -67,12 +67,14 @@ const register = async (req, res) => {
 
     // Send real verification email via SMTP
     const emailResult = await sendVerificationEmail(trimmedEmail, verifyCode);
+    if (!emailResult.success) {
+      console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
+    }
 
     res.status(201).json({
       requiresOtp: true,
       email: trimmedEmail,
-      message: `Account created. A 6-digit verification code was sent to ${trimmedEmail}.`,
-      devCode: verifyCode
+      message: `Account created. A 6-digit verification code has been sent to ${trimmedEmail}. Please check your inbox.`
     });
   } catch (error) {
     console.error("[ERROR] Register error:", error);
@@ -125,12 +127,14 @@ const login = async (req, res) => {
 
     // Send real verification email via SMTP
     const emailResult = await sendVerificationEmail(trimmedEmail, code);
+    if (!emailResult.success) {
+      console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
+    }
 
     res.json({
       requiresOtp: true,
       email: trimmedEmail,
-      message: `Verification code sent to ${trimmedEmail}. Enter the code to sign in.`,
-      devCode: code
+      message: `A 6-digit verification code has been sent to ${trimmedEmail}. Please check your inbox.`
     });
   } catch (error) {
     console.error("[ERROR] Login error:", error);
@@ -230,8 +234,7 @@ const resendLoginOtp = async (req, res) => {
     await sendVerificationEmail(trimmedEmail, code);
 
     res.json({
-      message: "New verification code dispatched to your email",
-      devCode: code
+      message: `A new verification code has been dispatched to ${trimmedEmail}. Please check your inbox.`
     });
   } catch (error) {
     console.error("[ERROR] Resend login OTP error:", error);
@@ -309,8 +312,7 @@ const forgotPassword = async (req, res) => {
     await sendPasswordResetEmail(trimmedEmail, code);
 
     res.json({
-      message: "Password reset code sent to your email address",
-      devCode: code
+      message: `Password reset code sent to ${trimmedEmail}. Please check your inbox.`
     });
   } catch (error) {
     console.error("[ERROR] Forgot password error:", error);
@@ -398,8 +400,7 @@ const sendVerification = async (req, res) => {
     await sendVerificationEmail(userEmail, code);
 
     res.json({
-      message: "Verification code dispatched to your email",
-      devCode: code
+      message: `Verification code dispatched to ${userEmail}. Please check your inbox.`
     });
   } catch (error) {
     console.error("[ERROR] Send verification error:", error);

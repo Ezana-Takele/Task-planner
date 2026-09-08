@@ -228,9 +228,9 @@ function App() {
       if (data.requiresOtp) {
         setAuthOtpPending(true);
         setAuthOtpEmail(data.email || authEmail.trim().toLowerCase());
-        setAuthOtpNotice(data.devCode ? `Verification Code: ${data.devCode}` : "");
-        setAuthOtpCode(data.devCode || "");
-        showToast("Verification code generated");
+        setAuthOtpNotice(data.message || `A 6-digit verification code has been sent to ${data.email || authEmail}.`);
+        setAuthOtpCode("");
+        showToast("Verification code sent to your email");
         return;
       }
 
@@ -285,11 +285,9 @@ function App() {
         method: "POST",
         body: JSON.stringify({ email: authOtpEmail })
       });
-      if (data.devCode) {
-        setAuthOtpNotice(`Verification Code: ${data.devCode}`);
-        setAuthOtpCode(data.devCode);
-      }
-      showToast("New verification code generated");
+      setAuthOtpNotice(data.message || "A new verification code has been sent to your email.");
+      setAuthOtpCode("");
+      showToast("New code sent to your email");
     } catch (err) {
       setAuthError(err.message || "Failed to resend code.");
     } finally {
@@ -321,11 +319,9 @@ function App() {
       });
 
       setResetStep(2);
-      if (data.devCode) {
-        setResetDevCodeNotice(`Reset Code: ${data.devCode}`);
-        setResetCode(data.devCode);
-      }
-      showToast("Reset code generated");
+      setResetDevCodeNotice("");
+      setResetCode("");
+      showToast("Reset code sent to your email");
     } catch (err) {
       setResetError(err.message || "Unable to process password reset request.");
     } finally {
@@ -368,15 +364,13 @@ function App() {
     setVerifyLoading(true);
     setVerifyError("");
     try {
-      const data = await apiRequest("/auth/send-verification", {
+      await apiRequest("/auth/send-verification", {
         method: "POST"
       });
 
-      if (data.devCode) {
-        setVerifyDevCodeNotice(`Verification Code: ${data.devCode}`);
-        setVerifyCode(data.devCode);
-      }
-      showToast("Verification code dispatched");
+      setVerifyDevCodeNotice("");
+      setVerifyCode("");
+      showToast("Verification code sent to your email");
     } catch (err) {
       setVerifyError(err.message || "Failed to generate verification code.");
     } finally {
