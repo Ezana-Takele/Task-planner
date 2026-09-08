@@ -29,7 +29,9 @@ import {
   UserCheck,
   UserMinus,
   User,
-  Layers
+  Layers,
+  Copy,
+  Link2
 } from "lucide-react";
 import "./App.css";
 import { apiRequest } from "./services/api";
@@ -1866,8 +1868,33 @@ function App() {
 
             {!sharingTask.is_shared ? (
               <form onSubmit={handleShareSubmit} className="ui-form">
+                {/* Share Via Direct Invite Link */}
+                <div className="form-group" style={{ marginBottom: "18px" }}>
+                  <label>Direct Task Share Link</label>
+                  <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+                    <input
+                      type="text"
+                      readOnly
+                      value={`${window.location.origin}/#task-${sharingTask.id}`}
+                      style={{ background: "var(--surface-subtle)", color: "var(--text-muted)", fontSize: "12px", fontFamily: "var(--font-mono)" }}
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      style={{ flexShrink: 0, padding: "6px 14px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/#task-${sharingTask.id}`);
+                        showToast("Task invite link copied to clipboard!");
+                      }}
+                    >
+                      <Copy size={13} />
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="form-group">
-                  <label>Collaborator User ID, Username or Email</label>
+                  <label>Or Delegate to User ID, Username or Email</label>
                   <input
                     type="text"
                     placeholder="Enter User ID (e.g. 5), username, or email"
