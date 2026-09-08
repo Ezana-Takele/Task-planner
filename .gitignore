@@ -22,3 +22,10 @@ Thumbs.db
 *.pdf
 presentation*.html
 presentation/
+
+# Testing & Scratch debug scripts
+*test*.js
+check-status.js
+scratch*
+*.log
+
