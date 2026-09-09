@@ -29,7 +29,6 @@ import {
   UserCheck,
   UserMinus,
   User,
-  Layers
   Layers,
   Copy,
   Link2
