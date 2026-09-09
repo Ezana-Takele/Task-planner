@@ -23,13 +23,18 @@ function createTransporter() {
   if (!host) return null;
 
   const port = parseInt(process.env.SMTP_PORT || "587", 10);
-  const isSecure = process.env.SMTP_SECURE === "true" || port === 465;
+  // Port 465 = SSL (secure:true), Port 587 = STARTTLS (secure:false, requireTLS:true)
+  const isSecure = port === 465;
 
   return nodemailer.createTransport({
     host,
     port,
     secure: isSecure,
-    auth: { user, pass }
+    requireTLS: !isSecure, // Force STARTTLS upgrade on port 587
+    auth: { user, pass },
+    connectionTimeout: 10000, // 10 second timeout for Vercel
+    greetingTimeout: 10000,
+    socketTimeout: 15000
   });
 }
 
