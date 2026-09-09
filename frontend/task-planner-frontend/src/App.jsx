@@ -29,6 +29,7 @@ import {
   UserCheck,
   UserMinus,
   User,
+  Layers
   Layers,
   Copy,
   Link2
@@ -1011,10 +1012,6 @@ function App() {
             </div>
             <div className="footer-meta">
               <span>Academic Defense Project • Ezana Takele</span>
-              <span>•</span>
-              <a href="https://github.com/Ezana-Takele/Task-planner" target="_blank" rel="noreferrer" className="footer-link">
-                GitHub Repository
-              </a>
             </div>
           </div>
         </footer>
@@ -1894,6 +1891,7 @@ function App() {
                 </div>
 
                 <div className="form-group">
+                  <label>Collaborator User ID, Username or Email</label>
                   <label>Or Delegate to User ID, Username or Email</label>
                   <input
                     type="text"
