@@ -1011,6 +1011,10 @@ function App() {
             </div>
             <div className="footer-meta">
               <span>Academic Defense Project • Ezana Takele</span>
+              <span>•</span>
+              <a href="https://github.com/Ezana-Takele/Task-planner/tree/main" target="_blank" rel="noreferrer" className="footer-link">
+                GitHub Repository
+              </a>
             </div>
           </div>
         </footer>
