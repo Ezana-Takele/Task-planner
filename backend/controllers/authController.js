@@ -68,7 +68,11 @@ const register = async (req, res) => {
     // Send real verification email via SMTP
     const emailResult = await sendVerificationEmail(trimmedEmail, verifyCode);
     if (!emailResult.success) {
-      console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
+      console.error(`[EMAIL FAIL] Could not send verification email to ${trimmedEmail}:`, emailResult.error);
+      return res.status(500).json({
+        message: "Account created but we could not send the verification email. Please contact support or try again later.",
+        error: "Email delivery failed"
+      });
     }
 
     res.status(201).json({
@@ -128,7 +132,11 @@ const login = async (req, res) => {
     // Send real verification email via SMTP
     const emailResult = await sendVerificationEmail(trimmedEmail, code);
     if (!emailResult.success) {
-      console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
+      console.error(`[EMAIL FAIL] Could not send OTP email to ${trimmedEmail}:`, emailResult.error);
+      return res.status(500).json({
+        message: "Could not send verification email. Please check your email address or try again later.",
+        error: "Email delivery failed"
+      });
     }
 
     res.json({
