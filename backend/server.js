@@ -29,9 +29,21 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health Check
+// Health Check with environment diagnostics
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: {
+      has_db_url: Boolean(process.env.DATABASE_URL),
+      has_jwt_secret: Boolean(process.env.JWT_SECRET),
+      has_smtp_user: Boolean(process.env.SMTP_USER),
+      has_smtp_pass: Boolean(process.env.SMTP_PASS),
+      has_smtp_host: Boolean(process.env.SMTP_HOST),
+      smtp_user_len: process.env.SMTP_USER ? process.env.SMTP_USER.length : 0,
+      smtp_port: process.env.SMTP_PORT || "default-587"
+    }
+  });
 });
 
 // Modular Routes (Handles both direct and serverless rewrites)
