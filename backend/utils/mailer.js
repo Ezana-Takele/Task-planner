@@ -3,13 +3,13 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 // Create SMTP Transporter
-function createTransporter() {
-  const host = process.env.SMTP_HOST;
+function createTransporter(forcedPort = null) {
+  const host = process.env.SMTP_HOST || "smtp-relay.brevo.com";
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (!user || !pass) {
-    return null; // SMTP not configured
+    return null; // SMTP credentials missing
   }
 
   // If using Gmail or host includes gmail
@@ -20,37 +20,54 @@ function createTransporter() {
     });
   }
 
-  if (!host) return null;
-
-  const port = parseInt(process.env.SMTP_PORT || "587", 10);
-  // Port 465 = SSL (secure:true), Port 587 = STARTTLS (secure:false, requireTLS:true)
+  const port = forcedPort || parseInt(process.env.SMTP_PORT || "587", 10);
   const isSecure = port === 465;
 
   return nodemailer.createTransport({
     host,
     port,
     secure: isSecure,
-    requireTLS: !isSecure, // Force STARTTLS upgrade on port 587
+    requireTLS: !isSecure,
     auth: { user, pass },
-    connectionTimeout: 10000, // 10 second timeout for Vercel
-    greetingTimeout: 10000,
-    socketTimeout: 15000
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 10000
   });
 }
 
-const FROM_ADDRESS = process.env.SMTP_FROM || (process.env.SMTP_USER ? `"TaskPlanner" <${process.env.SMTP_USER}>` : `"TaskPlanner" <no-reply@taskplanner.io>`);
+const FROM_ADDRESS = process.env.SMTP_FROM || '"TaskPlanner" <drtakeleezana@gmail.com>';
+
+async function dispatchMail(mailOptions) {
+  const configuredPort = parseInt(process.env.SMTP_PORT || "587", 10);
+  const primaryTransporter = createTransporter(configuredPort);
+  if (!primaryTransporter) {
+    console.error("[EMAIL CONFIG WARNING] Cannot dispatch email: SMTP credentials (SMTP_USER & SMTP_PASS) are missing.");
+    return { success: false, error: "SMTP credentials (SMTP_USER & SMTP_PASS) not configured in environment" };
+  }
+
+  try {
+    const info = await primaryTransporter.sendMail(mailOptions);
+    console.log(`[EMAIL SUCCESS] Sent via port ${configuredPort} (MessageId: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.warn(`[EMAIL WARN] Port ${configuredPort} failed: ${err.message}. Retrying with backup port...`);
+    const fallbackPort = configuredPort === 465 ? 587 : 465;
+    try {
+      const fallbackTransporter = createTransporter(fallbackPort);
+      const info = await fallbackTransporter.sendMail(mailOptions);
+      console.log(`[EMAIL SUCCESS] Sent via backup port ${fallbackPort} (MessageId: ${info.messageId})`);
+      return { success: true, messageId: info.messageId };
+    } catch (fallbackErr) {
+      console.error(`[EMAIL ERROR] Both port ${configuredPort} and backup port ${fallbackPort} failed:`, fallbackErr.message);
+      return { success: false, error: `${err.message} (Fallback: ${fallbackErr.message})` };
+    }
+  }
+}
 
 /**
  * Sends a 6-digit Email Verification Code
  */
 async function sendVerificationEmail(toEmail, code) {
-  const transporter = createTransporter();
-
-  if (!transporter) {
-    console.error(`[EMAIL CONFIG WARNING] Cannot dispatch real email to ${toEmail}: SMTP credentials (SMTP_USER & SMTP_PASS) are not set in environment.`);
-    return { success: false, error: "SMTP credentials not configured in environment" };
-  }
-
   const html = `
     <!DOCTYPE html>
     <html>
@@ -79,33 +96,19 @@ async function sendVerificationEmail(toEmail, code) {
     </html>
   `;
 
-  try {
-    const info = await transporter.sendMail({
-      from: FROM_ADDRESS,
-      to: toEmail,
-      subject: `Your Verification Code: ${code}`,
-      text: `Your Task Planner verification code is: ${code}. It will expire in 15 minutes.`,
-      html
-    });
-    console.log(`[EMAIL] Verification email sent to ${toEmail} (MessageId: ${info.messageId})`);
-    return { success: true, messageId: info.messageId };
-  } catch (err) {
-    console.error(`[EMAIL ERROR] Failed to send email to ${toEmail}:`, err.message);
-    return { success: false, error: err.message };
-  }
+  return dispatchMail({
+    from: FROM_ADDRESS,
+    to: toEmail,
+    subject: `Your Verification Code: ${code}`,
+    text: `Your Task Planner verification code is: ${code}. It will expire in 15 minutes.`,
+    html
+  });
 }
 
 /**
  * Sends a 6-digit Password Reset OTP
  */
 async function sendPasswordResetEmail(toEmail, code) {
-  const transporter = createTransporter();
-
-  if (!transporter) {
-    console.error(`[EMAIL CONFIG WARNING] Cannot dispatch password reset email to ${toEmail}: SMTP credentials are not set in environment.`);
-    return { success: false, error: "SMTP credentials not configured in environment" };
-  }
-
   const html = `
     <!DOCTYPE html>
     <html>
@@ -135,20 +138,13 @@ async function sendPasswordResetEmail(toEmail, code) {
     </html>
   `;
 
-  try {
-    const info = await transporter.sendMail({
-      from: FROM_ADDRESS,
-      to: toEmail,
-      subject: `Your Password Reset Code: ${code}`,
-      text: `Your Task Planner password reset code is: ${code}. It will expire in 15 minutes.`,
-      html
-    });
-    console.log(`[EMAIL] Password reset email sent to ${toEmail} (MessageId: ${info.messageId})`);
-    return { success: true, messageId: info.messageId };
-  } catch (err) {
-    console.error(`[EMAIL ERROR] Failed to send password reset email to ${toEmail}:`, err.message);
-    return { success: false, error: err.message };
-  }
+  return dispatchMail({
+    from: FROM_ADDRESS,
+    to: toEmail,
+    subject: `Your Password Reset Code: ${code}`,
+    text: `Your Task Planner password reset code is: ${code}. It will expire in 15 minutes.`,
+    html
+  });
 }
 
 module.exports = {
