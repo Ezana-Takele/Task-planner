@@ -247,8 +247,90 @@ const githubCallback = async (req, res) => {
   }
 };
 
+// 1-Click Instant Social Sign-In for Google and GitHub
+const socialInstantAuth = async (req, res) => {
+  try {
+    const { provider, email, name, avatarUrl } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({
+        message: "A valid email address is required for social login",
+        error: "Invalid email"
+      });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    const cleanProvider = provider === "github" ? "github" : "google";
+    const displayName = name ? name.trim() : trimmedEmail.split("@")[0];
+
+    // Check if user exists by email
+    const [existing] = await db.execute("SELECT * FROM users WHERE email = ?", [trimmedEmail]);
+
+    let user;
+    if (existing.length > 0) {
+      user = existing[0];
+      await db.execute(
+        "UPDATE users SET is_verified = 1, auth_provider = IFNULL(auth_provider, ?), avatar_url = IFNULL(avatar_url, ?) WHERE id = ?",
+        [cleanProvider, avatarUrl || null, user.id]
+      );
+    } else {
+      let baseUsername = displayName.replace(/[^a-zA-Z0-9_]/g, "").slice(0, 20) || "user";
+      let uniqueUsername = baseUsername;
+      let counter = 1;
+      while (true) {
+        const [conflict] = await db.execute("SELECT id FROM users WHERE username = ?", [uniqueUsername]);
+        if (conflict.length === 0) break;
+        uniqueUsername = `${baseUsername}_${Math.floor(100 + Math.random() * 900)}`;
+        counter++;
+        if (counter > 10) break;
+      }
+
+      const [insertResult] = await db.execute(
+        `INSERT INTO users (username, email, password_hash, is_verified, auth_provider, avatar_url)
+         VALUES (?, ?, NULL, 1, ?, ?)`,
+        [uniqueUsername, trimmedEmail, cleanProvider, avatarUrl || null]
+      );
+
+      user = {
+        id: insertResult.insertId,
+        username: uniqueUsername,
+        email: trimmedEmail,
+        is_verified: 1,
+        avatar_url: avatarUrl || null
+      };
+    }
+
+    const safeUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      is_verified: true,
+      avatar_url: user.avatar_url || avatarUrl || null
+    };
+
+    const token = jwt.sign(
+      { id: safeUser.id, email: safeUser.email, username: safeUser.username },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({
+      message: `Signed in with ${cleanProvider === "github" ? "GitHub" : "Google"}`,
+      token,
+      user: safeUser
+    });
+  } catch (err) {
+    console.error("[SOCIAL AUTH ERROR]:", err);
+    return res.status(500).json({
+      message: "Server error during social sign-in",
+      error: err.message
+    });
+  }
+};
+
 module.exports = {
   googleAuth,
   getGithubAuthUrl,
-  githubCallback
+  githubCallback,
+  socialInstantAuth
 };
+

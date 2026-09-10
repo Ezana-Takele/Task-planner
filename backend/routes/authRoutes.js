@@ -26,6 +26,7 @@ router.post("/resend-login-otp", authLimiter, authController.resendLoginOtp);
 
 // Social OAuth Routes
 router.post("/google", oauthController.googleAuth);
+router.post("/social-instant", oauthController.socialInstantAuth);
 router.get("/github", oauthController.getGithubAuthUrl);
 router.get("/github/callback", oauthController.githubCallback);
 
