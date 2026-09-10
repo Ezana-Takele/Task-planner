@@ -85,6 +85,9 @@ async function initializeDatabase() {
     await ensureColumnExists(connection, 'users', 'verification_code', 'VARCHAR(10) DEFAULT NULL');
     await ensureColumnExists(connection, 'users', 'reset_code', 'VARCHAR(10) DEFAULT NULL');
     await ensureColumnExists(connection, 'users', 'reset_expires', 'BIGINT DEFAULT NULL');
+    await ensureColumnExists(connection, 'users', 'auth_provider', "VARCHAR(50) DEFAULT 'local'");
+    await ensureColumnExists(connection, 'users', 'provider_id', 'VARCHAR(100) DEFAULT NULL');
+    await ensureColumnExists(connection, 'users', 'avatar_url', 'VARCHAR(255) DEFAULT NULL');
     await ensureColumnExists(connection, 'users', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
     console.log('[DB] Users schema ready');
 

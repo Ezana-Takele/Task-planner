@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const rateLimit = require("express-rate-limit");
 const authController = require("../controllers/authController");
+const oauthController = require("../controllers/oauthController");
 const authenticateToken = require("../middleware/authMiddleware");
 
 // Defensive Rate Limiting: 30 requests per 15 minutes per IP
@@ -22,6 +23,11 @@ router.post("/signup", authLimiter, authController.register);
 router.post("/login", authLimiter, authController.login);
 router.post("/verify-login-otp", authLimiter, authController.verifyLoginOtp);
 router.post("/resend-login-otp", authLimiter, authController.resendLoginOtp);
+
+// Social OAuth Routes
+router.post("/google", oauthController.googleAuth);
+router.get("/github", oauthController.getGithubAuthUrl);
+router.get("/github/callback", oauthController.githubCallback);
 
 router.get("/me", authenticateToken, authController.getMe);
 router.post("/forgot-password", authLimiter, authController.forgotPassword);
