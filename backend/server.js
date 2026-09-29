@@ -58,26 +58,6 @@ app.get("/api/health", async (req, res) => {
   });
 });
 
-// Diagnostic login endpoint for production verification
-app.post("/api/debug-login", async (req, res) => {
-  try {
-    const { email, password } = req.body || {};
-    const [users] = await db.execute("SELECT id, email, role, password_hash, is_verified FROM users WHERE email = ?", [email]);
-    if (!users || users.length === 0) {
-      return res.json({ step: "user_lookup", found: false, email });
-    }
-    const bcrypt = require("bcryptjs");
-    const match = await bcrypt.compare(password, users[0].password_hash);
-    return res.json({
-      step: "success",
-      user: { id: users[0].id, email: users[0].email, role: users[0].role, is_verified: users[0].is_verified },
-      passwordMatch: match
-    });
-  } catch (err) {
-    return res.status(500).json({ step: "failed", error: err.message, stack: err.stack });
-  }
-});
-
 // Modular Routes (Handles both direct and serverless rewrites)
 app.use("/api/auth", authRoutes);
 app.use("/auth", authRoutes);
