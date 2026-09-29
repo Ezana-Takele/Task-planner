@@ -1,5 +1,6 @@
 ﻿// backend/config/database.js
-const { Pool } = require('pg');
+// High-reliability PostgreSQL client manager for Serverless (Vercel) & Long-lived Node
+const { Client } = require('pg');
 require('dotenv').config();
 
 let connectionString = process.env.DATABASE_URL;
@@ -8,22 +9,18 @@ if (!connectionString) {
   console.error('[DB FATAL] DATABASE_URL is not set in environment variables!');
 }
 
-// Optimization for Neon on local node: remove pooler domain suffix if present to bypass proxy timeouts
+// Ensure direct non-pooler hostname for instant, non-blocking TLS handshakes
 if (connectionString && connectionString.includes("-pooler.")) {
   connectionString = connectionString.replace("-pooler.", ".");
 }
 
-const pool = new Pool({
-  connectionString,
-  ssl: { rejectUnauthorized: false },
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
-});
-
-pool.on('error', (err) => {
-  console.error('[DB POOL ERROR]', err.message);
-});
+function createClient() {
+  return new Client({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000
+  });
+}
 
 // Converts MySQL ? placeholders to PostgreSQL $1, $2, ...
 function convertPlaceholders(sql) {
@@ -31,9 +28,9 @@ function convertPlaceholders(sql) {
   return sql.replace(/\?/g, () => '$' + (paramIndex++));
 }
 
-// Emulate mysql2 pool.execute(sql, params) -> returns [rows, fields]
-// Supports insertId emulation via RETURNING id for INSERT statements
+// Execute query using dedicated client per call (optimal for serverless & cloud DB)
 async function execute(sql, params = []) {
+  const client = createClient();
   let pgSql = convertPlaceholders(sql.trim());
   const isInsert = /^INSERT\s+INTO/i.test(pgSql);
   
@@ -41,28 +38,41 @@ async function execute(sql, params = []) {
     pgSql += ' RETURNING id';
   }
 
-  const result = await pool.query(pgSql, params);
+  try {
+    await client.connect();
+    const result = await client.query(pgSql, params);
 
-  const formattedRows = result.rows;
-  if (isInsert && result.rows.length > 0) {
-    formattedRows.insertId = result.rows[0].id;
+    const formattedRows = result.rows;
+    if (isInsert && result.rows.length > 0) {
+      formattedRows.insertId = result.rows[0].id;
+    }
+    formattedRows.affectedRows = result.rowCount;
+
+    return [formattedRows, result.fields];
+  } finally {
+    try {
+      await client.end();
+    } catch (e) {}
   }
-  formattedRows.affectedRows = result.rowCount;
-
-  return [formattedRows, result.fields];
 }
 
-// Emulate mysql2 pool.query(sql, params) -> returns [rows, fields]
 async function query(sql, params = []) {
   if (Array.isArray(params) && params.length > 0) {
     return execute(sql, params);
   }
-  const result = await pool.query(sql);
-  return [result.rows, result.fields];
+  const client = createClient();
+  try {
+    await client.connect();
+    const result = await client.query(sql);
+    return [result.rows, result.fields];
+  } finally {
+    try {
+      await client.end();
+    } catch (e) {}
+  }
 }
 
 module.exports = {
-  pool,
   execute,
   query
 };
