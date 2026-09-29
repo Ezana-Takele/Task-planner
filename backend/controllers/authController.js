@@ -191,15 +191,17 @@ const verifyLoginOtp = async (req, res) => {
       [user.id]
     );
 
+    const role = user.role || (user.email.toLowerCase() === "drtakeleezana@gmail.com" ? "admin" : "user");
     const safeUser = {
       id: user.id,
       username: user.username,
       email: user.email,
+      role,
       is_verified: true
     };
 
     const token = jwt.sign(
-      { id: safeUser.id, email: safeUser.email, username: safeUser.username },
+      { id: safeUser.id, email: safeUser.email, username: safeUser.username, role: safeUser.role },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -258,7 +260,7 @@ const resendLoginOtp = async (req, res) => {
 const getMe = async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, username, email, is_verified, created_at FROM users WHERE id = ?",
+      "SELECT id, username, email, role, is_verified, created_at FROM users WHERE id = ?",
       [req.user.id]
     );
 
@@ -270,11 +272,13 @@ const getMe = async (req, res) => {
     }
 
     const user = rows[0];
+    const role = user.role || (user.email.toLowerCase() === "drtakeleezana@gmail.com" ? "admin" : "user");
     res.json({
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
+        role,
         is_verified: Boolean(user.is_verified),
         created_at: user.created_at
       }

@@ -7,6 +7,7 @@ const morgan = require("morgan");
 
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const initializeDatabase = require("./init-db");
 
 const app = express();
@@ -43,6 +44,8 @@ app.use("/api/auth", authRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/admin", adminRoutes);
 
 // 404 Handler
 app.use((req, res) => {

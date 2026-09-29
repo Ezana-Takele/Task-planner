@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import "./App.css";
 import { apiRequest } from "./services/api";
+import AdminPanelModal from "./AdminPanelModal";
 
 const CATEGORIES = [
   "General",
@@ -84,6 +85,7 @@ function App() {
 
   // Email Verification State
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [verifyCode, setVerifyCode] = useState("");
   const [verifyDevCodeNotice, setVerifyDevCodeNotice] = useState("");
   const [verifyLoading, setVerifyLoading] = useState(false);
@@ -1174,6 +1176,29 @@ function App() {
               {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
+            {/* Executive Admin Control Button (Admins Only) */}
+            {user?.role === "admin" && (
+              <button
+                onClick={() => setIsAdminModalOpen(true)}
+                className="btn-primary"
+                style={{
+                  padding: "6px 12px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+                  border: "none",
+                  boxShadow: "0 0 12px rgba(124, 58, 237, 0.4)"
+                }}
+                title="Open Admin Control Panel"
+              >
+                <ShieldAlert size={14} />
+                <span>Admin Control</span>
+              </button>
+            )}
+
             {/* User Profile Pill */}
             <div className="user-profile">
               <span className="user-avatar">{user?.username?.[0]?.toUpperCase() || "U"}</span>
@@ -1844,6 +1869,13 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* EXECUTIVE ADMIN CONTROL PANEL MODAL */}
+      <AdminPanelModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+        showToast={showToast}
+      />
 
       {/* TASK SHARING & COLLABORATION MODAL */}
       {sharingTask && (

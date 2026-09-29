@@ -1,101 +1,64 @@
-// backend/init-db.js
+﻿// backend/init-db.js
 require('dotenv').config();
-const mysql = require('mysql2/promise');
-
-function getConnectionConfig(withDatabase = true) {
-  if (process.env.DATABASE_URL) {
-    const url = new URL(process.env.DATABASE_URL);
-    const useSsl = process.env.DB_SSL === "true" || url.searchParams.get("ssl") !== "false" || !["localhost", "127.0.0.1"].includes(url.hostname);
-
-    return {
-      host: url.hostname,
-      port: parseInt(url.port || "3306", 10),
-      user: decodeURIComponent(url.username),
-      password: decodeURIComponent(url.password),
-      ...(withDatabase ? { database: url.pathname.replace(/^\//, "") } : {}),
-      ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {})
-    };
-  }
-
-  const host = process.env.DB_HOST || 'localhost';
-  const isRemote = host !== 'localhost' && host !== '127.0.0.1';
-  const useSsl = process.env.DB_SSL === "true" || (process.env.DB_SSL !== "false" && isRemote);
-
-  return {
-    host,
-    port: parseInt(process.env.DB_PORT, 10) || 3306,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    ...(withDatabase ? { database: process.env.DB_NAME || 'task_planner2' } : {}),
-    ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {})
-  };
-}
-
-async function ensureColumnExists(connection, table, column, definition) {
-  try {
-    const [cols] = await connection.query(`SHOW COLUMNS FROM \`${table}\` LIKE ?`, [column]);
-    if (cols.length === 0) {
-      await connection.query(`ALTER TABLE \`${table}\` ADD COLUMN \`${column}\` ${definition}`);
-      console.log(`[DB] Added column '${column}' to table '${table}'`);
-    }
-  } catch (err) {
-    console.warn(`[DB] Column verification notice for '${column}' in '${table}':`, err.message);
-  }
-}
+const { Pool } = require('pg');
 
 async function initializeDatabase() {
-  const cfg = getConnectionConfig(false);
-  const database = process.env.DB_NAME || (process.env.DATABASE_URL ? new URL(process.env.DATABASE_URL).pathname.replace(/^\//, "") : 'task_planner2');
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
 
-  console.log(`[DB] Connecting to MySQL on ${cfg.host}...`);
+  console.log('[DB] Connecting to PostgreSQL on Neon...');
 
-  let connection;
   try {
-    // 1. If not connected with predefined database, verify or create database
-    try {
-      connection = await mysql.createConnection(cfg);
-      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
-      console.log(`[DB] Database '${database}' verified`);
-      await connection.end();
-    } catch (createDbErr) {
-      // Cloud providers (like TiDB or Railway) often restrict CREATE DATABASE permissions and connect directly to an existing database
-      console.log(`[DB] Using pre-allocated database '${database}'`);
-    }
+    const client = await pool.connect();
 
-    // 2. Connect to the database to ensure schema integrity
-    const dbConfig = getConnectionConfig(true);
-    connection = await mysql.createConnection(dbConfig);
-
-    // Create users table
-    await connection.query(`
+    // 1. Users Table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         username VARCHAR(100) NOT NULL UNIQUE,
         email VARCHAR(150) NOT NULL UNIQUE,
         password_hash VARCHAR(255) NOT NULL,
-        is_verified TINYINT(1) DEFAULT 0,
+        is_verified SMALLINT DEFAULT 0,
         verification_code VARCHAR(10) DEFAULT NULL,
         reset_code VARCHAR(10) DEFAULT NULL,
         reset_expires BIGINT DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        auth_provider VARCHAR(50) DEFAULT 'local',
+        provider_id VARCHAR(100) DEFAULT NULL,
+        avatar_url VARCHAR(255) DEFAULT NULL,
+        role VARCHAR(20) DEFAULT 'user',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('[DB] Users table verified');
+
+    // 2. Ensure role column exists
+    await client.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name = 'users' AND column_name = 'role'
+        ) THEN
+          ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user';
+        END IF;
+      END $$;
     `);
 
-    await ensureColumnExists(connection, 'users', 'is_verified', 'TINYINT(1) DEFAULT 0');
-    await ensureColumnExists(connection, 'users', 'verification_code', 'VARCHAR(10) DEFAULT NULL');
-    await ensureColumnExists(connection, 'users', 'reset_code', 'VARCHAR(10) DEFAULT NULL');
-    await ensureColumnExists(connection, 'users', 'reset_expires', 'BIGINT DEFAULT NULL');
-    await ensureColumnExists(connection, 'users', 'auth_provider', "VARCHAR(50) DEFAULT 'local'");
-    await ensureColumnExists(connection, 'users', 'provider_id', 'VARCHAR(100) DEFAULT NULL');
-    await ensureColumnExists(connection, 'users', 'avatar_url', 'VARCHAR(255) DEFAULT NULL');
-    await ensureColumnExists(connection, 'users', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
-    console.log('[DB] Users schema ready');
+    // 3. Guarantee Ezana Takele is Super Admin
+    await client.query(`
+      UPDATE users 
+      SET role = 'admin' 
+      WHERE email = 'drtakeleezana@gmail.com';
+    `);
+    console.log('[DB] Super Admin role verified for drtakeleezana@gmail.com');
 
-    // Create tasks table
-    await connection.query(`
+    // 4. Tasks Table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS tasks (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         title VARCHAR(255) NOT NULL,
         description TEXT,
         status VARCHAR(50) DEFAULT 'pending',
@@ -104,41 +67,34 @@ async function initializeDatabase() {
         subtasks TEXT DEFAULT NULL,
         estimated_minutes INT DEFAULT 30,
         due_date VARCHAR(50) DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_user_id (user_id),
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
     `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);
+    `);
+    console.log('[DB] Tasks table verified');
 
-    await ensureColumnExists(connection, 'tasks', 'category', "VARCHAR(50) DEFAULT 'General'");
-    await ensureColumnExists(connection, 'tasks', 'subtasks', 'TEXT DEFAULT NULL');
-    await ensureColumnExists(connection, 'tasks', 'estimated_minutes', 'INT DEFAULT 30');
-    await ensureColumnExists(connection, 'tasks', 'due_date', 'VARCHAR(50) DEFAULT NULL');
-    console.log('[DB] Tasks schema ready');
-
-    // Create task_shares table for multi-user collaboration
-    await connection.query(`
+    // 5. Task Shares Table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS task_shares (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        task_id INT NOT NULL,
-        shared_with_user_id INT NOT NULL,
+        id SERIAL PRIMARY KEY,
+        task_id INT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+        shared_with_user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         permission VARCHAR(20) DEFAULT 'edit',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY uniq_task_share (task_id, shared_with_user_id),
-        FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-        FOREIGN KEY (shared_with_user_id) REFERENCES users(id) ON DELETE CASCADE
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT uniq_task_share UNIQUE (task_id, shared_with_user_id)
+      );
     `);
-    console.log('[DB] Task collaboration (task_shares) schema ready');
+    console.log('[DB] Task collaboration (task_shares) table verified');
 
-    await connection.end();
-    console.log('[DB] Database initialization complete');
+    client.release();
+    await pool.end();
+    console.log('[DB] PostgreSQL Database initialization complete!');
   } catch (err) {
-    console.error('[DB ERROR] Database initialization failed:', err.message);
-    if (connection) {
-      try { await connection.end(); } catch (e) {}
-    }
+    console.error('[DB ERROR] Database initialization failed:', err);
+    await pool.end();
     throw err;
   }
 }
