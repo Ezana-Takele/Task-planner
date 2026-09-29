@@ -16,6 +16,7 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: false
 });
 
 // Authentication Routes

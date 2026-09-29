@@ -13,6 +13,9 @@ const db = require("./config/database");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable trust proxy for Vercel / reverse proxy deployment
+app.set("trust proxy", 1);
+
 // Security and Core Middleware
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true, limit: "100mb" }));
@@ -71,7 +74,10 @@ app.use((req, res) => {
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error("[ERROR] Unhandled server exception:", err.stack || err.message);
-  res.status(500).json({ message: "Internal server error", error: "Internal server error" });
+  res.status(500).json({
+    message: err.message || "Internal server error",
+    error: err.message || "Internal server error"
+  });
 });
 
 // Start Server & Auto-Initialize Database
