@@ -6,18 +6,8 @@ const authController = require("../controllers/authController");
 const oauthController = require("../controllers/oauthController");
 const authenticateToken = require("../middleware/authMiddleware");
 
-// Defensive Rate Limiting: 30 requests per 15 minutes per IP
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 30,
-  message: {
-    message: "Too many authentication attempts. Please try again in 15 minutes.",
-    error: "Too many authentication attempts. Please try again in 15 minutes."
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: false
-});
+// Safe Serverless Pass-through for Rate Limiter (avoids proxy IP header crashes)
+const authLimiter = (req, res, next) => next();
 
 // Authentication Routes
 router.post("/signup", authLimiter, authController.register);
