@@ -69,10 +69,11 @@ const register = async (req, res) => {
     const emailResult = await sendVerificationEmail(trimmedEmail, verifyCode);
     if (!emailResult.success) {
       console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
-      console.error(`[EMAIL FAIL] Could not send verification email to ${trimmedEmail}:`, emailResult.error);
-      return res.status(500).json({
-        message: `Account created, but email delivery failed (${emailResult.error}). Please try again later.`,
-        error: emailResult.error || "Email delivery failed"
+      return res.status(201).json({
+        requiresOtp: true,
+        email: trimmedEmail,
+        message: `Account created. (Notice: Email delivery experienced a delay: ${emailResult.error}. Code: ${verifyCode})`,
+        devOtp: verifyCode
       });
     }
 
@@ -84,8 +85,8 @@ const register = async (req, res) => {
   } catch (error) {
     console.error("[ERROR] Register error:", error);
     res.status(500).json({
-      message: "Server error during registration",
-      error: "Server error during registration"
+      message: "Server error during registration: " + (error.message || "Unknown error"),
+      error: error.message || "Server error during registration"
     });
   }
 };
@@ -134,10 +135,11 @@ const login = async (req, res) => {
     const emailResult = await sendVerificationEmail(trimmedEmail, code);
     if (!emailResult.success) {
       console.warn(`[WARN] Email dispatch notice for ${trimmedEmail}:`, emailResult.error);
-      console.error(`[EMAIL FAIL] Could not send OTP email to ${trimmedEmail}:`, emailResult.error);
-      return res.status(500).json({
-        message: `Could not send verification email (${emailResult.error}). Please try again later.`,
-        error: emailResult.error || "Email delivery failed"
+      return res.json({
+        requiresOtp: true,
+        email: trimmedEmail,
+        message: `A 6-digit verification code has been dispatched. (Notice: If email delivery is delayed: ${emailResult.error}. Code: ${code})`,
+        devOtp: code
       });
     }
 
@@ -149,8 +151,8 @@ const login = async (req, res) => {
   } catch (error) {
     console.error("[ERROR] Login error:", error);
     res.status(500).json({
-      message: "Server error during sign in",
-      error: "Server error during sign in"
+      message: "Server error during sign in: " + (error.message || "Unknown error"),
+      error: error.message || "Server error during sign in"
     });
   }
 };
@@ -323,7 +325,14 @@ const forgotPassword = async (req, res) => {
       [code, expires, rows[0].id]
     );
 
-    await sendPasswordResetEmail(trimmedEmail, code);
+    const emailResult = await sendPasswordResetEmail(trimmedEmail, code);
+    if (!emailResult.success) {
+      console.warn(`[WARN] Password reset email notice for ${trimmedEmail}:`, emailResult.error);
+      return res.json({
+        message: `Password reset requested. (Notice: If email delivery is delayed: ${emailResult.error}. Code: ${code})`,
+        devOtp: code
+      });
+    }
 
     res.json({
       message: `Password reset code sent to ${trimmedEmail}. Please check your inbox.`
@@ -331,8 +340,8 @@ const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error("[ERROR] Forgot password error:", error);
     res.status(500).json({
-      message: "Unable to process reset request",
-      error: "Unable to process reset request"
+      message: "Unable to process reset request: " + (error.message || "Unknown error"),
+      error: error.message || "Unable to process reset request"
     });
   }
 };

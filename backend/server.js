@@ -8,7 +8,7 @@ const morgan = require("morgan");
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-const initializeDatabase = require("./init-db");
+const db = require("./config/database");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,10 +31,26 @@ app.get("/", (req, res) => {
 });
 
 // Health Check with environment diagnostics
-app.get("/api/health", (req, res) => {
+app.get("/api/health", async (req, res) => {
+  let dbStatus = "unknown";
+  let dbLatencyMs = null;
+  try {
+    const t0 = Date.now();
+    await db.query("SELECT 1");
+    dbLatencyMs = Date.now() - t0;
+    dbStatus = "connected";
+  } catch (err) {
+    dbStatus = "error: " + err.message;
+  }
+
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
+    database: {
+      status: dbStatus,
+      latencyMs: dbLatencyMs,
+      engine: "PostgreSQL (Neon)"
+    },
     smtpReady: true
   });
 });

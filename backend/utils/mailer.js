@@ -24,7 +24,7 @@ function createTransporter(forcedPort = null) {
     });
   }
 
-  const port = forcedPort || parseInt(process.env.SMTP_PORT || "587", 10);
+  const port = forcedPort || parseInt(process.env.SMTP_PORT || "465", 10);
   const isSecure = port === 465;
 
   return nodemailer.createTransport({
@@ -33,16 +33,16 @@ function createTransporter(forcedPort = null) {
     secure: isSecure,
     requireTLS: !isSecure,
     auth: { user, pass },
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 10000
+    connectionTimeout: 4000,
+    greetingTimeout: 4000,
+    socketTimeout: 5000
   });
 }
 
 const FROM_ADDRESS = process.env.SMTP_FROM || '"TaskPlanner" <drtakeleezana@gmail.com>';
 
 async function dispatchMail(mailOptions) {
-  const configuredPort = parseInt(process.env.SMTP_PORT || "587", 10);
+  const configuredPort = parseInt(process.env.SMTP_PORT || "465", 10);
   const primaryTransporter = createTransporter(configuredPort);
   if (!primaryTransporter) {
     console.error("[EMAIL CONFIG WARNING] Cannot dispatch email: SMTP credentials (SMTP_USER & SMTP_PASS) are missing.");
